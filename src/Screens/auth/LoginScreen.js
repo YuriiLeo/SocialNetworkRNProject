@@ -1,3 +1,4 @@
+import { Link } from "@react-navigation/native";
 import React, { useState } from "react";
 
 import {
@@ -10,6 +11,8 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Platform,
+  ImageBackground,
+  Button,
 } from "react-native";
 
 const initialState = {
@@ -17,8 +20,9 @@ const initialState = {
   password: "",
 };
 
-export default function LoginScreen() {
+export default function LoginScreen({ navigation }) {
   console.log(Platform.OS);
+  console.log("navigation", navigation);
   const [isShowKeyBoard, setIsShowKeyBoard] =
     useState(false);
   const [state, setState] = useState(initialState);
@@ -32,63 +36,109 @@ export default function LoginScreen() {
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View
-        style={{
-          ...styles.form,
-          paddingBottom: isShowKeyBoard ? 10 : 111,
-        }}
+        style={styles.container}
+        // onLayout={onLayoutRootView}
       >
-        <KeyboardAvoidingView
-          behavior={
-            Platform.OS === "ios" ? "padding" : "height"
-          }
+        <ImageBackground
+          source={require("../../../assets/images/PhotoBG.jpg")}
+          style={styles.image}
         >
-          <Text style={styles.title}>Sign In</Text>
-          <View>
-            <TextInput
-              style={styles.input}
-              placeholder={"Email addres"}
-              onFocus={() => setIsShowKeyBoard(true)}
-              value={state.email}
-              onChangeText={(value) =>
-                setState((prevState) => ({
-                  ...prevState,
-                  email: value,
-                }))
+          <View
+            style={{
+              ...styles.form,
+              paddingBottom: isShowKeyBoard ? 10 : 111,
+              marginBottom: isShowKeyBoard ? -40 : 0,
+            }}
+          >
+            <KeyboardAvoidingView
+              behavior={
+                Platform.OS === "ios" ? "padding" : "height"
               }
-            />
+            >
+              <Text style={styles.title}>Sign In</Text>
+              <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder={"Email addres"}
+                  onFocus={() => setIsShowKeyBoard(true)}
+                  value={state.email}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      email: value,
+                    }))
+                  }
+                />
+              </View>
+              <View>
+                <TextInput
+                  style={styles.input}
+                  secureTextEntry={true}
+                  placeholder={"**********"}
+                  onFocus={() => setIsShowKeyBoard(true)}
+                  value={state.password}
+                  onChangeText={(value) =>
+                    setState((prevState) => ({
+                      ...prevState,
+                      password: value,
+                    }))
+                  }
+                />
+              </View>
+            </KeyboardAvoidingView>
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={keyboardHide}
+              style={styles.btn}
+            >
+              <Text style={styles.btnTitle}>Sign In</Text>
+            </TouchableOpacity>
+            <View style={{ alignItems: "center" }}>
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("Registration")
+                }
+              >
+                <Text>
+                  Don't have an account?
+                  <Text
+                    style={{
+                      color: "blue",
+                    }}
+                  >
+                    {" "}
+                    Register
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+              {/* <Link
+                to={{
+                  screen: "Registration",
+                  // params: { id: "jane" },
+                }}
+              >
+                Don't have an account? Register
+              </Link> */}
+              {/* <Text>Don't have an account? Register</Text> */}
+            </View>
           </View>
-          <View>
-            <TextInput
-              style={styles.input}
-              secureTextEntry={true}
-              placeholder={"**********"}
-              onFocus={() => setIsShowKeyBoard(true)}
-              value={state.password}
-              onChangeText={(value) =>
-                setState((prevState) => ({
-                  ...prevState,
-                  password: value,
-                }))
-              }
-            />
-          </View>
-        </KeyboardAvoidingView>
-        <TouchableOpacity
-          activeOpacity={0.8}
-          onPress={keyboardHide}
-          style={styles.btn}
-        >
-          <Text style={styles.btnTitle}>Sign In</Text>
-        </TouchableOpacity>
-        <View style={{ alignItems: "center" }}>
-          <Text>Нет аккаунта? Зарегистрироваться</Text>
-        </View>
+        </ImageBackground>
       </View>
     </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 2,
+    // fontFamily: "Inter",
+    justifyContent: "flex-start",
+  },
+  image: {
+    flex: 4,
+    resizeMode: "cover",
+    justifyContent: "flex-end",
+  },
   form: {
     paddingBottom: 111,
     // position: "relative",
@@ -98,7 +148,7 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 25,
   },
   title: {
-    fontFamily: "Inter",
+    // fontFamily: "Inter",
     marginBottom: 16,
     marginTop: 32,
     fontSize: 30,
