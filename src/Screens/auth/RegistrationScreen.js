@@ -11,7 +11,6 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ImageBackground,
-  Button,
 } from "react-native";
 const initialState = {
   login: "",
@@ -138,7 +137,6 @@ export default function RegistrationScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 2,
-    // fontFamily: "Inter",
     justifyContent: "flex-start",
   },
   image: {

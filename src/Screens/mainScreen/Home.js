@@ -91,6 +91,7 @@ export default function Home() {
         name="Profile"
         component={ProfileScreen}
         options={{
+          headerShown: false,
           headerRight: () => (
             <TouchableOpacity
               activeOpacity={0.6}
