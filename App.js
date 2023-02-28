@@ -1,10 +1,36 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { NavigationContainer } from "@react-navigation/native";
+
+import { useFonts } from "expo-font";
+import * as SplashScreen from "expo-splash-screen";
+
 import useRoute from "./src/router";
+
+const fontsMap = {
+  SS_Regular: require("./assets/fonts/ShantellSans-Regular.ttf"),
+  SS_Medium: require("./assets/fonts/ShantellSans-Medium.ttf"),
+  SS_Bold: require("./assets/fonts/ShantellSans-Bold.ttf"),
+};
+
+SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   // const [isReady, setIsReady] = useState(false);
+  const [fontsLoaded] = useFonts(fontsMap);
   const routing = useRoute({});
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  onLayoutRootView();
+
+  if (!fontsLoaded) {
+    return null;
+  }
+  // const routing = useRoute({});
   return (
     <NavigationContainer>{routing}</NavigationContainer>
   );
