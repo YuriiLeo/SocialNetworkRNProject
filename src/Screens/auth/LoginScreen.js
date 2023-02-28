@@ -1,4 +1,3 @@
-import { Link } from "@react-navigation/native";
 import React, { useState } from "react";
 
 import {
@@ -12,7 +11,6 @@ import {
   TouchableWithoutFeedback,
   Platform,
   ImageBackground,
-  Button,
 } from "react-native";
 
 const initialState = {

@@ -33,10 +33,7 @@ export default function RegistrationScreen() {
   };
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View
-        style={styles.container}
-        // onLayout={onLayoutRootView}
-      >
+      <View style={styles.container}>
         <ImageBackground
           source={require("../../../assets/images/PhotoBG.jpg")}
           style={styles.image}
@@ -113,6 +110,7 @@ export default function RegistrationScreen() {
               <Text style={styles.btnTitle}>
                 Registration
               </Text>
+              S
             </TouchableOpacity>
             <View style={{ alignItems: "center" }}>
               <Text>
@@ -129,22 +127,6 @@ export default function RegistrationScreen() {
                   Sign in
                 </Link>
               </Text>
-
-              {/* <Link
-                to={{
-                  screen: "Login",
-                }}
-              >
-                Already have an account?
-                <Text
-                  style={{
-                    color: "blue",
-                  }}
-                >
-                  {" "}
-                  Sign in
-                </Text>
-              </Link> */}
             </View>
           </View>
         </ImageBackground>

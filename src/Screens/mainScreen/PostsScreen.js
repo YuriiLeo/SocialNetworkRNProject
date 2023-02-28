@@ -11,6 +11,7 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { EvilIcons } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const posts = [
   {
@@ -50,49 +51,59 @@ const posts = [
   },
 ];
 
-const PostItem = ({ item, navigation }) => (
-  <View style={{ marginBottom: 32 }}>
-    <View style={styles.containerImage}>
-      <Image
-        style={styles.postPhoto}
-        source={{ uri: `${item.url}` }}
-      />
-    </View>
-    <View>
-      <Text style={styles.postTitle}>{item.title}</Text>
-    </View>
-    <View style={styles.containerOptionBar}>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("CommentsScreen")
-          }
+const PostItem = ({ item }) => {
+  const navigation = useNavigation();
+  return (
+    <View style={{ marginBottom: 32 }}>
+      <View style={styles.containerImage}>
+        <Image
+          style={styles.postPhoto}
+          source={{ uri: `${item.url}` }}
+        />
+      </View>
+      <View>
+        <Text style={styles.postTitle}>{item.title}</Text>
+      </View>
+      <View style={styles.containerOptionBar}>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
         >
-          <FontAwesome5
-            name="comment-alt"
+          <TouchableOpacity
+            onPress={() => navigation.navigate("Comments")}
+          >
+            <FontAwesome5
+              name="comment-alt"
+              size={20}
+              color="#BDBDBD"
+            />
+          </TouchableOpacity>
+          <Text style={styles.coments}>
+            {item.comments}
+          </Text>
+        </View>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+        >
+          <Feather
+            name="map-pin"
             size={20}
             color="#BDBDBD"
+            onPress={() => navigation.navigate("Location")}
           />
-        </TouchableOpacity>
-        <Text style={styles.coments}>{item.comments}</Text>
-      </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-        }}
-      >
-        <Feather name="map-pin" size={20} color="#BDBDBD" />
-        <Text style={styles.location}>{item.location}</Text>
+          <Text style={styles.location}>
+            {item.location}
+          </Text>
+        </View>
       </View>
     </View>
-  </View>
-);
+  );
+};
 
 export default function PostsScreen() {
   return (
@@ -146,11 +157,13 @@ const styles = StyleSheet.create({
   userTitle: {
     color: "#212121",
     fontWeight: "700",
+    fontFamily: "SS_Bold",
     fontSize: 13,
   },
   userEmail: {
     color: "rgba(33, 33, 33, 0.8)",
     fontWeight: "400",
+    fontFamily: "SS_Regular",
     fontSize: 11,
   },
   containerImage: {},
@@ -164,6 +177,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     fontSize: 16,
     fontWeight: "500",
+    fontFamily: "SS_Medium",
   },
   containerOptionBar: {
     flexDirection: "row",
@@ -173,11 +187,13 @@ const styles = StyleSheet.create({
   coments: {
     color: "#BDBDBD",
     fontWeight: "400",
+    fontFamily: "SS_Regular",
     fontSize: 16,
     marginLeft: 6,
   },
   location: {
     fontWeight: "400",
+    fontFamily: "SS_Regular",
     fontSize: 16,
     marginLeft: 6,
   },

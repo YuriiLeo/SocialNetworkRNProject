@@ -1,39 +1,19 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  TouchableOpacity,
-} from "react-native";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-const AuthStack = createNativeStackNavigator();
-// const MainTab = createBottomTabNavigator();
-
-// import { Feather } from "@expo/vector-icons";
-// import { Ionicons } from "@expo/vector-icons";
-
-import Registration from "../src/Screens/auth/RegistrationScreen";
-import Login from "../src/Screens/auth/LoginScreen";
-// import PostsScreen from "../src/Screens/mainScreen/PostsScreen";
-// import CreateScreen from "../src/Screens/mainScreen/CreateScreen";
-// import ProfileScreen from "../src/Screens/mainScreen/ProfileScreen";
-// import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-
-const MainTab = createBottomTabNavigator();
-
-import { Feather } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
 
-import PostsScreen from "../src/Screens/mainScreen/PostsScreen";
-import CreateScreen from "../src/Screens/mainScreen/CreateScreen";
-import ProfileScreen from "../src/Screens/mainScreen/ProfileScreen";
-// import { TouchableOpacity } from "react-native-gesture-handler";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+const AuthStack = createNativeStackNavigator();
+const HomeStack = createNativeStackNavigator();
+
+import Registration from "../src/Screens/auth/RegistrationScreen";
+import Login from "../src/Screens/auth/LoginScreen";
 import Home from "../src/Screens/mainScreen/Home";
+import CommentsScreen from "../src/Screens/mainScreen/CommentsScreen";
+import MapScreen from "../src/Screens/mainScreen/MapScreen";
+
 import { useNavigation } from "@react-navigation/native";
 
 export default function useRoute(isAuth) {
@@ -58,44 +38,62 @@ export default function useRoute(isAuth) {
     );
   }
   return (
-    <Home />
-
-    // <MainTab.Navigator
-    //   //   tapBarOptions={{
-    //   //     showLabel: false,
-    //   //   }}
-    //   //
-    //   screenOptions={{
-    //     tabBarShowLabel: false,
-    //   }}
-    // >
-    //   <MainTab.Screen
-    //     name="Posts"
-    //     component={PostsScreen}
-    //     options={{
-    //       tabBarIcon: (focused, color, size) => (
-    //         <Feather name="grid" size={24} color={color} />
-    //       ),
-    //     }}
-    //   />
-    //   <MainTab.Screen
-    //     name="Create"
-    //     component={CreateScreen}
-    //     options={{
-    //       tabBarIcon: (focused, color, size) => (
-    //         <Ionicons name="add" size={24} color={color} />
-    //       ),
-    //     }}
-    //   />
-    //   <MainTab.Screen
-    //     name="Profile"
-    //     component={ProfileScreen}
-    //     options={{
-    //       tabBarIcon: ({ focused, color, size }) => (
-    //         <Feather name="user" size={24} color={color} />
-    //       ),
-    //     }}
-    //   />
-    // </MainTab.Navigator>
+    <HomeStack.Navigator>
+      <HomeStack.Screen
+        name="Home"
+        component={Home}
+        options={{
+          headerShown: false,
+        }}
+      />
+      <HomeStack.Screen
+        options={{
+          headerStyle: { borderBottomWidth: 1 },
+          headerTitleAlign: "center",
+          headerLeft: () => {
+            const navigation = useNavigation();
+            return (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                style={{ marginRight: 15 }}
+                onPress={() => navigation.goBack()}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+        name="Comments"
+        component={CommentsScreen}
+      />
+      <HomeStack.Screen
+        options={{
+          headerStyle: { borderBottomWidth: 1 },
+          headerTitleAlign: "center",
+          headerLeft: () => {
+            const navigation = useNavigation();
+            return (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                style={{ marginRight: 15 }}
+                onPress={() => navigation.goBack()}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            );
+          },
+        }}
+        name="Location"
+        component={MapScreen}
+      />
+    </HomeStack.Navigator>
   );
 }
