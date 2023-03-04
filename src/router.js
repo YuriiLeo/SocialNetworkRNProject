@@ -1,16 +1,31 @@
 import React from "react";
-import { TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  View,
+  TouchableOpacity,
+} from "react-native";
 
 import { AntDesign } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const AuthStack = createNativeStackNavigator();
-const HomeStack = createNativeStackNavigator();
+// const HomeStack = createNativeStackNavigator();
+const MainTab = createBottomTabNavigator();
 
 import Registration from "../src/Screens/auth/RegistrationScreen";
 import Login from "../src/Screens/auth/LoginScreen";
-import Home from "../src/Screens/mainScreen/Home";
+
+import CreateScreen from "../src/Screens/mainScreens/CreateScreen";
+import ProfileScreen from "../src/Screens/mainScreens/ProfileScreen";
+import PostsScreen from "../src/Screens/mainScreens/PostsScreen";
+
+// import DefaultPostsScreen from "../src/Screens/nestedScreens/DefaultPostsScreen";
+
+// import Home from "../src/Screens/mainScreen/Home";
 import CommentsScreen from "./Screens/nestedScreens/CommentsScreen";
 import MapScreen from "./Screens/nestedScreens/MapScreen";
 
@@ -38,15 +53,96 @@ export default function useRoute(isAuth) {
     );
   }
   return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen
-        name="Home"
-        component={Home}
+    <MainTab.Navigator
+      initialRouteName="Posts"
+      screenOptions={{
+        tabBarShowLabel: false,
+        headerTitleAlign: "center",
+        headerTitleStyle: {
+          fontFamily: "SS_Medium",
+        },
+        headerStyle: {
+          borderBottomWidth: 1,
+        },
+        tabBarStyle: {
+          height: 83,
+        },
+      }}
+    >
+      <MainTab.Screen
+        name="Posts"
+        component={PostsScreen}
         options={{
           headerShown: false,
+          // headerRight: () => (
+          //   <TouchableOpacity
+          //     activeOpacity={0.6}
+          //     style={{ marginRight: 15 }}
+          //   >
+          //     <Feather
+          //       name="log-out"
+          //       size={24}
+          //       color="#BDBDBD"
+          //       onPress={() => navigation.navigate("Login")}
+          //     />
+          //   </TouchableOpacity>
+          // ),
+          tabBarIcon: ({ focused, color, size }) => (
+            <Feather name="grid" size={24} color={color} />
+          ),
         }}
       />
-      <HomeStack.Screen
+      <MainTab.Screen
+        options={{
+          headerTitle: "Create a publication",
+          headerLeft: () => {
+            return (
+              <TouchableOpacity
+                activeOpacity={0.6}
+                style={{ marginLeft: 15 }}
+                onPress={() => navigation.goBack()}
+              >
+                <AntDesign
+                  name="arrowleft"
+                  size={24}
+                  color="black"
+                />
+              </TouchableOpacity>
+            );
+          },
+          tabBarIcon: () => (
+            <View style={styles.button}>
+              <Ionicons name="add" size={20} color="#FFF" />
+            </View>
+          ),
+        }}
+        name="Create"
+        component={CreateScreen}
+      />
+      <MainTab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerShown: false,
+          headerRight: () => (
+            <TouchableOpacity
+              activeOpacity={0.6}
+              style={{ marginRight: 15 }}
+            >
+              <Feather
+                name="log-out"
+                size={24}
+                color="#BDBDBD"
+                onPress={() => navigation.navigate("Login")}
+              />
+            </TouchableOpacity>
+          ),
+          tabBarIcon: ({ focused, color, size }) => (
+            <Feather name="user" size={24} color={color} />
+          ),
+        }}
+      />
+      {/* <MainTab.Screen
         options={{
           headerStyle: { borderBottomWidth: 1 },
           headerTitleAlign: "center",
@@ -70,7 +166,7 @@ export default function useRoute(isAuth) {
         name="Comments"
         component={CommentsScreen}
       />
-      <HomeStack.Screen
+      <MainTab.Screen
         options={{
           headerStyle: { borderBottomWidth: 1 },
           headerTitleAlign: "center",
@@ -93,7 +189,81 @@ export default function useRoute(isAuth) {
         }}
         name="Location"
         component={MapScreen}
-      />
-    </HomeStack.Navigator>
+      /> */}
+    </MainTab.Navigator>
+
+    // <HomeStack.Navigator>
+    //   <HomeStack.Screen
+    //     name="Home"
+    //     component={Home}
+    //     options={{
+    //       headerShown: false,
+    //     }}
+    //   />
+    // <HomeStack.Screen
+    //   options={{
+    //     headerStyle: { borderBottomWidth: 1 },
+    //     headerTitleAlign: "center",
+    //     headerLeft: () => {
+    //       const navigation = useNavigation();
+    //       return (
+    //         <TouchableOpacity
+    //           activeOpacity={0.6}
+    //           style={{ marginRight: 15 }}
+    //           onPress={() => navigation.goBack()}
+    //         >
+    //           <AntDesign
+    //             name="arrowleft"
+    //             size={24}
+    //             color="black"
+    //           />
+    //         </TouchableOpacity>
+    //       );
+    //     },
+    //   }}
+    //   name="Comments"
+    //   component={CommentsScreen}
+    // />
+    // <HomeStack.Screen
+    //   options={{
+    //     headerStyle: { borderBottomWidth: 1 },
+    //     headerTitleAlign: "center",
+    //     headerLeft: () => {
+    //       const navigation = useNavigation();
+    //       return (
+    //         <TouchableOpacity
+    //           activeOpacity={0.6}
+    //           style={{ marginRight: 15 }}
+    //           onPress={() => navigation.goBack()}
+    //         >
+    //           <AntDesign
+    //             name="arrowleft"
+    //             size={24}
+    //             color="black"
+    //           />
+    //         </TouchableOpacity>
+    //       );
+    //     },
+    //   }}
+    //   name="Location"
+    //   component={MapScreen}
+    // />
+    // </HomeStack.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#FF6C00",
+    width: 70,
+    height: 40,
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 20,
+  },
+});

@@ -13,7 +13,7 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
-// import PostItem from "../../components/PostItem";
+import PostItem from "../../components/PostItem";
 
 import posts from "../../components/posts.json";
 
@@ -39,63 +39,63 @@ export default function DefaultPostsScreen({ navigation }) {
       <FlatList
         data={posts}
         keyExtractor={(item) => item.id}
-        // renderItem={({ item }) => <PostItem item={item} />}
-        renderItem={({ item }) => (
-          <View style={{ marginBottom: 32 }}>
-            <View>
-              <Image
-                style={styles.postPhoto}
-                source={{ uri: `${item.url}` }}
-              />
-            </View>
-            <View>
-              <Text style={styles.postTitle}>
-                {item.title}
-              </Text>
-            </View>
-            <View style={styles.containerOptionBar}>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <TouchableOpacity
-                  onPress={() =>
-                    navigation.navigate("Comments")
-                  }
-                >
-                  <FontAwesome5
-                    name="comment-alt"
-                    size={20}
-                    color="#BDBDBD"
-                  />
-                </TouchableOpacity>
-                <Text style={styles.coments}>
-                  {item.comments}
-                </Text>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                }}
-              >
-                <Feather
-                  name="map-pin"
-                  size={20}
-                  color="#BDBDBD"
-                  onPress={() =>
-                    navigation.navigate("Location")
-                  }
-                />
-                <Text style={styles.location}>
-                  {item.location}
-                </Text>
-              </View>
-            </View>
-          </View>
-        )}
+        renderItem={({ item }) => <PostItem item={item} />}
+        // renderItem={({ item }) => (
+        //   <View style={{ marginBottom: 32 }}>
+        //     <View>
+        //       <Image
+        //         style={styles.postPhoto}
+        //         source={{ uri: `${item.url}` }}
+        //       />
+        //     </View>
+        //     <View>
+        //       <Text style={styles.postTitle}>
+        //         {item.title}
+        //       </Text>
+        //     </View>
+        //     <View style={styles.containerOptionBar}>
+        //       <View
+        //         style={{
+        //           flexDirection: "row",
+        //           alignItems: "center",
+        //         }}
+        //       >
+        //         <TouchableOpacity
+        //           onPress={() =>
+        //             navigation.navigate("Comments")
+        //           }
+        //         >
+        //           <FontAwesome5
+        //             name="comment-alt"
+        //             size={20}
+        //             color="#BDBDBD"
+        //           />
+        //         </TouchableOpacity>
+        //         <Text style={styles.coments}>
+        //           {item.comments}
+        //         </Text>
+        //       </View>
+        //       <View
+        //         style={{
+        //           flexDirection: "row",
+        //           alignItems: "center",
+        //         }}
+        //       >
+        //         <Feather
+        //           name="map-pin"
+        //           size={20}
+        //           color="#BDBDBD"
+        //           onPress={() =>
+        //             navigation.navigate("Location")
+        //           }
+        //         />
+        //         <Text style={styles.location}>
+        //           {item.location}
+        //         </Text>
+        //       </View>
+        //     </View>
+        //   </View>
+        // )}
       />
     </View>
   );
