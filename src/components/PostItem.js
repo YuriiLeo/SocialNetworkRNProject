@@ -19,7 +19,7 @@ export default function PostItem({ item }) {
       <View>
         <Image
           style={styles.postPhoto}
-          source={{ uri: `${item.url}` }}
+          source={{ uri: `${item.photo}` }}
         />
       </View>
       <View>
