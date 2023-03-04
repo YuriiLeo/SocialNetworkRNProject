@@ -11,8 +11,8 @@ const HomeStack = createNativeStackNavigator();
 import Registration from "../src/Screens/auth/RegistrationScreen";
 import Login from "../src/Screens/auth/LoginScreen";
 import Home from "../src/Screens/mainScreen/Home";
-import CommentsScreen from "../src/Screens/mainScreen/CommentsScreen";
-import MapScreen from "../src/Screens/mainScreen/MapScreen";
+import CommentsScreen from "./Screens/nestedScreens/CommentsScreen";
+import MapScreen from "./Screens/nestedScreens/MapScreen";
 
 import { useNavigation } from "@react-navigation/native";
 

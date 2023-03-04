@@ -30,13 +30,13 @@ export default function ProfileScreen({
               ></Image>
             </View>
             <Text style={styles.title}>{user}</Text>
-            <FlatList
+            {/* <FlatList
               data={posts}
               renderItem={({ item }) => (
                 <PostItem item={item} />
               )}
               keyExtractor={(item) => item.id}
-            />
+            /> */}
           </View>
         </ImageBackground>
       </View>

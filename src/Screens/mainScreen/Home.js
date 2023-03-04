@@ -13,10 +13,11 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { AntDesign } from "@expo/vector-icons";
 
-import PostsScreen from "../../../src/Screens/mainScreen/PostsScreen";
-import CreateScreen from "../../../src/Screens/mainScreen/CreateScreen";
-import ProfileScreen from "../../../src/Screens/mainScreen/ProfileScreen";
+import PostsScreen from "../mainScreens/PostsScreen";
+import CreateScreen from "../mainScreens/CreateScreen";
+import ProfileScreen from "../mainScreens/ProfileScreen";
 import { useNavigation } from "@react-navigation/native";
+import DefaultPostsScreen from "../nestedScreens/DefaultPostsScreen";
 
 export default function Home() {
   const navigation = useNavigation();
@@ -40,7 +41,8 @@ export default function Home() {
     >
       <MainTab.Screen
         name="Posts"
-        component={PostsScreen}
+        // component={PostsScreen}
+        component={DefaultPostsScreen}
         options={{
           headerRight: () => (
             <TouchableOpacity
