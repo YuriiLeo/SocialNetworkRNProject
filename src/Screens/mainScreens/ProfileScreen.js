@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Text,
   TouchableWithoutFeedback,
@@ -10,11 +10,20 @@ import {
 } from "react-native";
 import PostItem from "../../components/PostItem";
 
-import posts from "../../components/posts.json";
-
 export default function ProfileScreen({
   user = "Natali Romanova",
+  route,
+  navigation,
 }) {
+  console.log("routeProf", route.params);
+
+  const [posts, setPosts] = useState([]);
+  useEffect(() => {
+    if (route.params) {
+      setPosts((prevState) => [route.params, ...prevState]);
+    }
+  }, [route.params]);
+
   return (
     <TouchableWithoutFeedback>
       <View style={styles.container}>
@@ -30,13 +39,33 @@ export default function ProfileScreen({
               ></Image>
             </View>
             <Text style={styles.title}>{user}</Text>
-            {/* <FlatList
-              data={posts}
-              renderItem={({ item }) => (
-                <PostItem item={item} />
-              )}
-              keyExtractor={(item) => item.id}
-            /> */}
+            {posts.length !== 0 ? (
+              <FlatList
+                data={posts}
+                renderItem={({ item }) => (
+                  <PostItem
+                    item={item}
+                    navigation={navigation}
+                  />
+                )}
+                // keyExtractor={(item) => item.id}
+                keyExtractor={(item, index) =>
+                  index.toString()
+                }
+              />
+            ) : (
+              <Text
+                style={{
+                  fontSize: 16,
+                  marginTop: 50,
+                  textAlign: "center",
+                  fontWeight: "700",
+                  fontFamily: "SS_Bold",
+                }}
+              >
+                Make your first post faster
+              </Text>
+            )}
           </View>
         </ImageBackground>
       </View>

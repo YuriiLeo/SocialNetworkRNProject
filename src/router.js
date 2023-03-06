@@ -9,11 +9,11 @@ import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 
+import { useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 
 const AuthStack = createNativeStackNavigator();
-// const HomeStack = createNativeStackNavigator();
 const MainTab = createBottomTabNavigator();
 
 import Registration from "../src/Screens/auth/RegistrationScreen";
@@ -22,14 +22,6 @@ import Login from "../src/Screens/auth/LoginScreen";
 import CreateScreen from "../src/Screens/mainScreens/CreateScreen";
 import ProfileScreen from "../src/Screens/mainScreens/ProfileScreen";
 import PostsScreen from "../src/Screens/mainScreens/PostsScreen";
-
-// import DefaultPostsScreen from "../src/Screens/nestedScreens/DefaultPostsScreen";
-
-// import Home from "../src/Screens/mainScreen/Home";
-import CommentsScreen from "./Screens/nestedScreens/CommentsScreen";
-import MapScreen from "./Screens/nestedScreens/MapScreen";
-
-import { useNavigation } from "@react-navigation/native";
 
 export default function useRoute(isAuth) {
   if (!isAuth) {
@@ -74,19 +66,6 @@ export default function useRoute(isAuth) {
         component={PostsScreen}
         options={{
           headerShown: false,
-          // headerRight: () => (
-          //   <TouchableOpacity
-          //     activeOpacity={0.6}
-          //     style={{ marginRight: 15 }}
-          //   >
-          //     <Feather
-          //       name="log-out"
-          //       size={24}
-          //       color="#BDBDBD"
-          //       onPress={() => navigation.navigate("Login")}
-          //     />
-          //   </TouchableOpacity>
-          // ),
           tabBarIcon: ({ focused, color, size }) => (
             <Feather name="grid" size={24} color={color} />
           ),
@@ -96,11 +75,14 @@ export default function useRoute(isAuth) {
         options={{
           headerTitle: "Create a publication",
           headerLeft: () => {
+            const navigation = useNavigation();
             return (
               <TouchableOpacity
                 activeOpacity={0.6}
                 style={{ marginLeft: 15 }}
-                onPress={() => navigation.goBack()}
+                onPress={() =>
+                  navigation.navigate("DefaultPosts")
+                }
               >
                 <AntDesign
                   name="arrowleft"
@@ -142,113 +124,7 @@ export default function useRoute(isAuth) {
           ),
         }}
       />
-      {/* <MainTab.Screen
-        options={{
-          headerStyle: { borderBottomWidth: 1 },
-          headerTitleAlign: "center",
-          headerLeft: () => {
-            const navigation = useNavigation();
-            return (
-              <TouchableOpacity
-                activeOpacity={0.6}
-                style={{ marginRight: 15 }}
-                onPress={() => navigation.goBack()}
-              >
-                <AntDesign
-                  name="arrowleft"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
-            );
-          },
-        }}
-        name="Comments"
-        component={CommentsScreen}
-      />
-      <MainTab.Screen
-        options={{
-          headerStyle: { borderBottomWidth: 1 },
-          headerTitleAlign: "center",
-          headerLeft: () => {
-            const navigation = useNavigation();
-            return (
-              <TouchableOpacity
-                activeOpacity={0.6}
-                style={{ marginRight: 15 }}
-                onPress={() => navigation.goBack()}
-              >
-                <AntDesign
-                  name="arrowleft"
-                  size={24}
-                  color="black"
-                />
-              </TouchableOpacity>
-            );
-          },
-        }}
-        name="Location"
-        component={MapScreen}
-      /> */}
     </MainTab.Navigator>
-
-    // <HomeStack.Navigator>
-    //   <HomeStack.Screen
-    //     name="Home"
-    //     component={Home}
-    //     options={{
-    //       headerShown: false,
-    //     }}
-    //   />
-    // <HomeStack.Screen
-    //   options={{
-    //     headerStyle: { borderBottomWidth: 1 },
-    //     headerTitleAlign: "center",
-    //     headerLeft: () => {
-    //       const navigation = useNavigation();
-    //       return (
-    //         <TouchableOpacity
-    //           activeOpacity={0.6}
-    //           style={{ marginRight: 15 }}
-    //           onPress={() => navigation.goBack()}
-    //         >
-    //           <AntDesign
-    //             name="arrowleft"
-    //             size={24}
-    //             color="black"
-    //           />
-    //         </TouchableOpacity>
-    //       );
-    //     },
-    //   }}
-    //   name="Comments"
-    //   component={CommentsScreen}
-    // />
-    // <HomeStack.Screen
-    //   options={{
-    //     headerStyle: { borderBottomWidth: 1 },
-    //     headerTitleAlign: "center",
-    //     headerLeft: () => {
-    //       const navigation = useNavigation();
-    //       return (
-    //         <TouchableOpacity
-    //           activeOpacity={0.6}
-    //           style={{ marginRight: 15 }}
-    //           onPress={() => navigation.goBack()}
-    //         >
-    //           <AntDesign
-    //             name="arrowleft"
-    //             size={24}
-    //             color="black"
-    //           />
-    //         </TouchableOpacity>
-    //       );
-    //     },
-    //   }}
-    //   name="Location"
-    //   component={MapScreen}
-    // />
-    // </HomeStack.Navigator>
   );
 }
 

@@ -1,13 +1,22 @@
 import { Camera, CameraType } from "expo-camera";
 import { useEffect, useState } from "react";
 import {
+  Alert,
   Button,
+  Dimensions,
   Image,
+  Keyboard,
+  KeyboardAvoidingView,
   StyleSheet,
   Text,
+  TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   View,
 } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
+import { Ionicons } from "@expo/vector-icons";
+import { FontAwesome } from "@expo/vector-icons";
 
 import * as Location from "expo-location";
 
@@ -15,8 +24,12 @@ export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
   const [snap, setSnap] = useState(null);
   const [photo, setPhoto] = useState("");
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState("");
   const [errorMsg, setErrorMsg] = useState(null);
+  const [title, setTitle] = useState("");
+  const [locality, setLocality] = useState("");
+  const [isShowKeyBoard, setIsShowKeyBoard] =
+    useState(false);
 
   const [permission, requestPermission] =
     Camera.useCameraPermissions();
@@ -31,21 +44,14 @@ export default function CreateScreen({ navigation }) {
         );
         return;
       }
-
-      // let location = await Location.getCurrentPositionAsync(
-      //   {}
-      // );
-      // setLocation(location);
     })();
   }, []);
 
   if (!permission) {
-    // Camera permissions are still loading
     return <View />;
   }
 
   if (!permission.granted) {
-    // Camera permissions are not granted yet
     return (
       <View style={styles.container}>
         <Text style={{ textAlign: "center" }}>
@@ -59,12 +65,12 @@ export default function CreateScreen({ navigation }) {
     );
   }
 
-  let text = "Waiting..";
-  if (errorMsg) {
-    text = errorMsg;
-  } else if (location) {
-    text = JSON.stringify(location);
-  }
+  // let text = "Waiting..";
+  // if (errorMsg) {
+  //   text = errorMsg;
+  // } else if (location) {
+  //   text = JSON.stringify(location);
+  // }
 
   function toggleCameraType() {
     setType((current) =>
@@ -75,78 +81,168 @@ export default function CreateScreen({ navigation }) {
   }
 
   const takePhoto = async () => {
-    console.log(!photo);
-    // if (!photo) {
-    const { uri } = await snap.takePictureAsync();
-    const { coords } =
-      await Location.getCurrentPositionAsync();
-
-    console.log("latitude", coords.latitude);
-    console.log("longitude", coords.longitude);
-
-    console.log("snap", uri);
-    setPhoto(uri);
-    console.log("image", photo);
-    //   }
-    //   if (photo) {
-    //     setPhoto("");
-    //     console.log("photo2", photo);
-    //   }
+    if (!photo) {
+      const { uri } = await snap.takePictureAsync();
+      setPhoto(uri);
+      let currentLocation =
+        await Location.getCurrentPositionAsync({});
+      setLocation(currentLocation);
+    }
+    if (photo) {
+      setPhoto("");
+    }
   };
 
   const postIsReady = () => {
-    if (!photo) return false;
+    if (!photo || !title || !locality || !location)
+      return false;
     return true;
   };
 
-  const sendPhoto = () => {
-    if (!postIsReady) return;
-    navigation.navigate("DefaultPosts", { photo });
+  const sendPhoto = async () => {
+    if (!postIsReady())
+      return Alert.alert("Fill in all fields");
+    // let currentLocation =
+    //   await Location.getCurrentPositionAsync({});
+    // setLocation(currentLocation);
+
+    navigation.navigate("DefaultPosts", {
+      photo,
+      location: location.coords,
+      title,
+      locality,
+    });
     setPhoto("");
+    setLocation("");
+    setTitle("");
+    setLocality("");
   };
 
   return (
-    <View style={styles.container}>
-      <Camera
-        style={styles.camera}
-        type={type}
-        ref={setSnap}
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <KeyboardAvoidingView
+        behavior={
+          Platform.OS === "ios" ? "padding" : "height"
+        }
+        style={{ flex: 1, backgroundColor: "#FFFFFF" }}
       >
-        {photo && (
-          <View style={styles.takePhotoContainer}>
-            <Image
-              source={{ uri: photo }}
-              style={{ height: 200, width: 200 }}
-            />
+        <View style={styles.container}>
+          <Camera
+            style={styles.camera}
+            type={type}
+            ref={setSnap}
+          >
+            {photo && (
+              <View style={styles.takePhotoContainer}>
+                <Image
+                  source={{ uri: photo }}
+                  style={{
+                    width:
+                      Dimensions.get("window").width - 32,
+                    height: 240,
+                    borderRadius: 8,
+                  }}
+                />
+              </View>
+            )}
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={toggleCameraType}
+              >
+                <Ionicons
+                  name="camera-reverse-outline"
+                  size={24}
+                  color="#BDBDBD"
+                />
+              </TouchableOpacity>
+            </View>
+            {!photo ? (
+              <View style={styles.snapWrapper}>
+                <TouchableOpacity
+                  onPress={takePhoto}
+                  style={styles.snapContainer}
+                >
+                  <MaterialIcons
+                    name="photo-camera"
+                    size={24}
+                    color="#BDBDBD"
+                  />
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <View style={styles.deleteSnapWrapper}>
+                <TouchableOpacity
+                  onPress={takePhoto}
+                  style={{
+                    ...styles.snapContainer,
+                    width: 30,
+                    height: 30,
+                  }}
+                >
+                  <FontAwesome
+                    name="trash-o"
+                    size={24}
+                    color="black"
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+          </Camera>
+          <View style={styles.inputContainer}>
+            {!photo ? (
+              <Text style={styles.textOptionsFoto}>
+                Upload a photo
+              </Text>
+            ) : (
+              <Text style={styles.textOptionsFoto}>
+                Edit photo
+              </Text>
+            )}
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder={"Title..."}
+                onFocus={() => setIsShowKeyBoard(true)}
+                value={title}
+                onChangeText={(value) => setTitle(value)}
+              />
+            </View>
+            <View>
+              <TextInput
+                style={styles.input}
+                placeholder={"Locality..."}
+                onFocus={() => setIsShowKeyBoard(true)}
+                value={locality}
+                onChangeText={(value) => setLocality(value)}
+              />
+            </View>
           </View>
-        )}
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={toggleCameraType}
-          >
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.snapWrapper}>
-          <TouchableOpacity
-            onPress={takePhoto}
-            style={styles.snapContainer}
-          >
-            <Text style={styles.snap}>Photo</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.sendBtnContainer}>
           <TouchableOpacity
             onPress={sendPhoto}
-            style={styles.snapContainer}
+            style={{
+              ...styles.publishBtn,
+              backgroundColor: !postIsReady()
+                ? "#F6F6F6"
+                : "#FF6C00",
+            }}
           >
-            <Text style={styles.snap}>Send</Text>
+            <Text
+              style={{
+                fontFamily: "SS_Regular",
+                fontSize: 16,
+                color: postIsReady()
+                  ? "#ffffff"
+                  : "#BDBDBD",
+              }}
+            >
+              {photo && !location && <Text>Wait</Text>}{" "}
+              Publish
+            </Text>
           </TouchableOpacity>
         </View>
-      </Camera>
-      {/* <Text style={styles.paragraph}>{text}</Text> */}
-    </View>
+      </KeyboardAvoidingView>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -154,20 +250,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-start",
-    // alignItems: "flex-start",
+    marginHorizontal: 16,
   },
   camera: {
     position: "relative",
-    // flex: 1,
-    // width: 343,
     height: 240,
     marginTop: 32,
-    marginHorizontal: 16,
+    marginBottom: 8,
+    borderRadius: 8,
   },
   takePhotoContainer: {
     position: "absolute",
-    // top: 10,
-    // left: 10,
     borderColor: "#fff",
     borderWidth: 1,
     height: "100%",
@@ -179,18 +272,21 @@ const styles = StyleSheet.create({
     left: "50%",
     marginRight: "-50%",
     marginBottom: "-50%",
-    // transform: translate("-50%", "-50%"),
-
     flex: 1,
-    // justifyContent: "center",
     justifyContent: "flex-start",
 
     alignItems: "center",
   },
+  deleteSnapWrapper: {
+    position: "absolute",
+    bottom: -10,
+    right: 10,
+  },
   snapContainer: {
     marginBottom: 20,
     borderWidth: 1,
-    borderColor: "#FF6C00",
+    borderColor: "transparent",
+    backgroundColor: "#FFFFFF",
     width: 50,
     height: 50,
     borderRadius: 50,
@@ -210,9 +306,34 @@ const styles = StyleSheet.create({
     alignItems: "flex-end",
   },
   text: {
-    // fontSize: 24,
     fontWeight: "bold",
     color: "white",
   },
-  sendBtnContainer: {},
+  publishBtn: {
+    marginTop: 43,
+    marginBottom: 16,
+    backgroundColor: "#FF6C00",
+    height: 51,
+    borderRadius: 100,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  inputContainer: {},
+  textOptionsFoto: {
+    marginBottom: 16,
+    color: "#BDBDBD",
+    fontFamily: "SS_Regular",
+    fontSize: 16,
+  },
+  input: {
+    marginTop: 16,
+    paddingLeft: 16,
+    borderBottomWidth: 1,
+    borderColor: "#E8E8E8",
+    borderRadius: 8,
+    height: 50,
+    fontFamily: "SS_Regular",
+    color: "#BDBDBD",
+    fontSize: 16,
+  },
 });

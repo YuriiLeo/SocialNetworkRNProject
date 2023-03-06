@@ -7,23 +7,27 @@ import {
   View,
 } from "react-native";
 
-import { useNavigation } from "@react-navigation/native";
-
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
-export default function PostItem({ item }) {
-  const navigation = useNavigation();
+export default function PostItem({ item, navigation }) {
+  const {
+    photo,
+    title,
+    coments = 0,
+    locality,
+    location,
+  } = item;
   return (
     <View style={{ marginBottom: 32 }}>
       <View>
         <Image
           style={styles.postPhoto}
-          source={{ uri: `${item.photo}` }}
+          source={{ uri: `${photo}` }}
         />
       </View>
       <View>
-        <Text style={styles.postTitle}>{item.title}</Text>
+        <Text style={styles.postTitle}>{title}</Text>
       </View>
       <View style={styles.containerOptionBar}>
         <View
@@ -33,7 +37,11 @@ export default function PostItem({ item }) {
           }}
         >
           <TouchableOpacity
-            onPress={() => navigation.navigate("Comments")}
+            onPress={() =>
+              navigation.navigate("Comments", {
+                photo: photo,
+              })
+            }
           >
             <FontAwesome5
               name="comment-alt"
@@ -41,9 +49,7 @@ export default function PostItem({ item }) {
               color="#BDBDBD"
             />
           </TouchableOpacity>
-          <Text style={styles.coments}>
-            {item.comments}
-          </Text>
+          <Text style={styles.coments}>{coments}</Text>
         </View>
         <View
           style={{
@@ -55,11 +61,14 @@ export default function PostItem({ item }) {
             name="map-pin"
             size={20}
             color="#BDBDBD"
-            onPress={() => navigation.navigate("Location")}
+            onPress={() =>
+              navigation.navigate("Location", {
+                ...location,
+                title,
+              })
+            }
           />
-          <Text style={styles.location}>
-            {item.location}
-          </Text>
+          <Text style={styles.location}>{locality}</Text>
         </View>
       </View>
     </View>
