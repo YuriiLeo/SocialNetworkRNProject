@@ -1,5 +1,5 @@
 import { Camera, CameraType } from "expo-camera";
-import { useEffect, useState } from "react";
+import { cloneElement, useEffect, useState } from "react";
 import {
   Alert,
   Button,
@@ -19,6 +19,15 @@ import { Ionicons } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 
 import * as Location from "expo-location";
+import { db, storage } from "../../firebase/config";
+import { v4 } from "uuid";
+import {
+  getDownloadURL,
+  ref,
+  uploadBytes,
+} from "firebase/storage";
+import { addDoc, collection } from "firebase/firestore";
+import { useSelector } from "react-redux";
 
 export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
@@ -30,6 +39,10 @@ export default function CreateScreen({ navigation }) {
   const [locality, setLocality] = useState("");
   const [isShowKeyBoard, setIsShowKeyBoard] =
     useState(false);
+
+  const { userId, login } = useSelector(
+    (state) => state.auth
+  );
 
   const [permission, requestPermission] =
     Camera.useCameraPermissions();
@@ -106,16 +119,57 @@ export default function CreateScreen({ navigation }) {
     //   await Location.getCurrentPositionAsync({});
     // setLocation(currentLocation);
 
-    navigation.navigate("DefaultPosts", {
-      photo,
-      location: location.coords,
-      title,
-      locality,
-    });
+    uploadPostToServer();
+    console.log("hi");
+    navigation.navigate("DefaultPosts");
     setPhoto("");
     setLocation("");
     setTitle("");
     setLocality("");
+  };
+
+  const uploadPhotoToServer = async () => {
+    try {
+      const response = await fetch(photo);
+      const file = await response.blob();
+      const photoId = v4();
+      const storageRef = ref(
+        storage,
+        `postImage/${photoId}`
+      );
+      await uploadBytes(storageRef, file);
+      const processedPhoto = await getDownloadURL(
+        ref(storage, `postImage/${photoId}`)
+      );
+
+      console.log("processedPhoto", processedPhoto);
+      return processedPhoto;
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const uploadPostToServer = async () => {
+    try {
+      console.log("hi hi");
+      const photo = await uploadPhotoToServer();
+      console.log("photo", photo);
+      const createPost = await addDoc(
+        collection(db, "posts"),
+        {
+          photo,
+          location: location.coords,
+          title,
+          locality,
+          userId,
+          login,
+        }
+      );
+      console.log("eee");
+      console.log("createPost", createPost);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -137,8 +191,8 @@ export default function CreateScreen({ navigation }) {
                 <Image
                   source={{ uri: photo }}
                   style={{
-                    width:
-                      Dimensions.get("window").width - 32,
+                    width: 100,
+                    // Dimensions.get("window").width - 32,
                     height: 240,
                     borderRadius: 8,
                   }}

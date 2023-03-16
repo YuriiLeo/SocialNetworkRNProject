@@ -1,3 +1,4 @@
+import { collection, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   FlatList,
@@ -6,19 +7,37 @@ import {
   Text,
   View,
 } from "react-native";
+import { useSelector } from "react-redux";
 
 import PostItem from "../../components/PostItem";
+import { db } from "../../firebase/config";
 
 export default function DefaultPostsScreen({
   route,
   navigation,
 }) {
   const [posts, setPosts] = useState([]);
+
+  const { email, login } = useSelector(
+    (state) => state.auth
+  );
+
+  const getAllPost = async () => {
+    const postRef = collection(db, "posts");
+
+    onSnapshot(postRef, (data) => {
+      setPosts(
+        data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+      );
+    });
+  };
+
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [route.params, ...prevState]);
-    }
-  }, [route.params]);
+    getAllPost();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -30,12 +49,8 @@ export default function DefaultPostsScreen({
           />
         </View>
         <View>
-          <Text style={styles.userTitle}>
-            Natali Romanova
-          </Text>
-          <Text style={styles.userEmail}>
-            email@example.com
-          </Text>
+          <Text style={styles.userTitle}>{login}</Text>
+          <Text style={styles.userEmail}>{email}</Text>
         </View>
       </View>
       {posts.length !== 0 ? (

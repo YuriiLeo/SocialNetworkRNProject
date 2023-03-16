@@ -17,7 +17,9 @@ export default function PostItem({ item, navigation }) {
     coments = 0,
     locality,
     location,
+    id,
   } = item;
+  console.log("id", id);
   return (
     <View style={{ marginBottom: 32 }}>
       <View>
@@ -39,7 +41,8 @@ export default function PostItem({ item, navigation }) {
           <TouchableOpacity
             onPress={() =>
               navigation.navigate("Comments", {
-                photo: photo,
+                photo,
+                postId: id,
               })
             }
           >

@@ -13,8 +13,8 @@ export default function MapScreen({ route }) {
       <MapView
         style={{ flex: 1 }}
         region={{
-          latitude: latitude,
-          longitude: longitude,
+          latitude,
+          longitude,
           longitudeDelta: "0.001",
           latitudeDelta: "0.006",
         }}
@@ -27,8 +27,8 @@ export default function MapScreen({ route }) {
       >
         <Marker
           coordinate={{
-            latitude: latitude,
-            longitude: longitude,
+            latitude,
+            longitude,
           }}
           title={title}
         />

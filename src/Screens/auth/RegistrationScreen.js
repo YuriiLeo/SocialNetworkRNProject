@@ -12,6 +12,11 @@ import {
   TouchableWithoutFeedback,
   ImageBackground,
 } from "react-native";
+
+import { useDispatch } from "react-redux";
+
+import { authSignUpUser } from "../../redux/auth/authOperations";
+
 const initialState = {
   login: "",
   email: "",
@@ -19,17 +24,23 @@ const initialState = {
 };
 
 export default function RegistrationScreen() {
-  console.log(Platform.OS);
   const [isShowKeyBoard, setIsShowKeyBoard] =
     useState(false);
   const [state, setState] = useState(initialState);
 
+  const dispatch = useDispatch();
+
+  const hendleSubmit = () => {
+    keyboardHide();
+    dispatch(authSignUpUser(state));
+    setState(initialState);
+  };
+
   const keyboardHide = () => {
     setIsShowKeyBoard(false);
     Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
   };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View style={styles.container}>
@@ -103,13 +114,12 @@ export default function RegistrationScreen() {
 
             <TouchableOpacity
               activeOpacity={0.8}
-              onPress={keyboardHide}
+              onPress={hendleSubmit}
               style={styles.btn}
             >
               <Text style={styles.btnTitle}>
                 Registration
               </Text>
-              S
             </TouchableOpacity>
             <View style={{ alignItems: "center" }}>
               <Text>

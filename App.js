@@ -1,10 +1,19 @@
-import React, { useCallback } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux";
 
 import { useFonts } from "expo-font";
 import * as SplashScreen from "expo-splash-screen";
 
 import useRoute from "./src/router";
+import store from "./src/redux/store";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./src/firebase/config";
+import Main from "./src/components/Main";
 
 const fontsMap = {
   SS_Regular: require("./assets/fonts/ShantellSans-Regular.ttf"),
@@ -16,7 +25,18 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const [fontsLoaded] = useFonts(fontsMap);
-  const routing = useRoute({});
+  // const [user, setUser] = useState(null);
+  // console.log("user Change", user);
+
+  // useEffect(() => {
+  //   first;
+
+  //   return () => {
+  //     second;
+  //   };
+  // }, [third]);
+
+  // const routing = useRoute(user);
 
   const onLayoutRootView = useCallback(async () => {
     if (fontsLoaded) {
@@ -30,7 +50,10 @@ export default function App() {
     return null;
   }
   return (
-    <NavigationContainer>{routing}</NavigationContainer>
+    <Provider store={store}>
+      <Main />
+      {/* <NavigationContainer>{routing}</NavigationContainer> */}
+    </Provider>
   );
 }
 

@@ -26,7 +26,7 @@ import PostsScreen from "../src/Screens/mainScreens/PostsScreen";
 export default function useRoute(isAuth) {
   if (!isAuth) {
     return (
-      <AuthStack.Navigator initialRouteName="Login">
+      <AuthStack.Navigator initialRouteName="Registration">
         <AuthStack.Screen
           options={{
             headerShown: false,

@@ -1,3 +1,9 @@
+import {
+  collection,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
   Text,
@@ -8,21 +14,38 @@ import {
   Image,
   FlatList,
 } from "react-native";
+import { useSelector } from "react-redux";
 import PostItem from "../../components/PostItem";
+import { db } from "../../firebase/config";
 
 export default function ProfileScreen({
-  user = "Natali Romanova",
   route,
   navigation,
 }) {
-  console.log("routeProf", route.params);
-
   const [posts, setPosts] = useState([]);
+
+  const { login, userId } = useSelector(
+    (state) => state.auth
+  );
+
+  const getUserPosts = async () => {
+    const q = query(
+      collection(db, "posts"),
+      where("userId", "==", userId)
+    );
+    onSnapshot(q, (data) => {
+      setPosts(
+        data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }))
+      );
+    });
+  };
+
   useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [route.params, ...prevState]);
-    }
-  }, [route.params]);
+    getUserPosts();
+  }, []);
 
   return (
     <TouchableWithoutFeedback>
@@ -38,7 +61,7 @@ export default function ProfileScreen({
                 // source={require("../../assets/images/IMG.jpg")}
               ></Image>
             </View>
-            <Text style={styles.title}>{user}</Text>
+            <Text style={styles.title}>{login}</Text>
             {posts.length !== 0 ? (
               <FlatList
                 data={posts}
@@ -48,10 +71,7 @@ export default function ProfileScreen({
                     navigation={navigation}
                   />
                 )}
-                // keyExtractor={(item) => item.id}
-                keyExtractor={(item, index) =>
-                  index.toString()
-                }
+                keyExtractor={(item) => item.id}
               />
             ) : (
               <Text

@@ -1,3 +1,4 @@
+// import { Link } from "@react-navigation/native";
 import React, { useState } from "react";
 
 import {
@@ -13,24 +14,35 @@ import {
   ImageBackground,
 } from "react-native";
 
+import { useDispatch } from "react-redux";
+import { authSignInUser } from "../../redux/auth/authOperations";
+
 const initialState = {
   email: "",
   password: "",
 };
 
 export default function LoginScreen({ navigation }) {
-  console.log(Platform.OS);
-  console.log("navigation", navigation);
+  // console.log(Platform.OS);
+  // console.log("navigation", navigation);
   const [isShowKeyBoard, setIsShowKeyBoard] =
     useState(false);
   const [state, setState] = useState(initialState);
 
+  const dispatch = useDispatch();
+
+  const hendleSubmit = () => {
+    keyboardHide();
+    console.log(state);
+    setState(initialState);
+    dispatch(authSignInUser(state));
+  };
+
   const keyboardHide = () => {
     setIsShowKeyBoard(false);
     Keyboard.dismiss();
-    console.log(state);
-    setState(initialState);
   };
+
   return (
     <TouchableWithoutFeedback onPress={keyboardHide}>
       <View
@@ -41,17 +53,17 @@ export default function LoginScreen({ navigation }) {
           source={require("../../../assets/images/PhotoBG.jpg")}
           style={styles.image}
         >
-          <View
-            style={{
-              ...styles.form,
-              paddingBottom: isShowKeyBoard ? 10 : 111,
-              marginBottom: isShowKeyBoard ? -40 : 0,
-            }}
+          <KeyboardAvoidingView
+            behavior={
+              Platform.OS === "ios" ? "padding" : "height"
+            }
           >
-            <KeyboardAvoidingView
-              behavior={
-                Platform.OS === "ios" ? "padding" : "height"
-              }
+            <View
+              style={{
+                ...styles.form,
+                paddingBottom: isShowKeyBoard ? 10 : 111,
+                marginBottom: isShowKeyBoard ? -40 : 0,
+              }}
             >
               <Text style={styles.title}>Sign In</Text>
               <View>
@@ -83,43 +95,46 @@ export default function LoginScreen({ navigation }) {
                   }
                 />
               </View>
-            </KeyboardAvoidingView>
-            <TouchableOpacity
-              activeOpacity={0.8}
-              onPress={keyboardHide}
-              style={styles.btn}
-            >
-              <Text style={styles.btnTitle}>Sign In</Text>
-            </TouchableOpacity>
-            <View style={{ alignItems: "center" }}>
+
               <TouchableOpacity
-                onPress={() =>
-                  navigation.navigate("Registration")
-                }
+                activeOpacity={0.8}
+                onPress={hendleSubmit}
+                style={styles.btn}
               >
-                <Text>
-                  Don't have an account?
-                  <Text
-                    style={{
-                      color: "blue",
-                    }}
-                  >
-                    {" "}
-                    Register
-                  </Text>
-                </Text>
+                <Text style={styles.btnTitle}>Sign In</Text>
               </TouchableOpacity>
-              {/* <Link
-                to={{
-                  screen: "Registration",
-                  // params: { id: "jane" },
-                }}
-              >
-                Don't have an account? Register
-              </Link> */}
-              {/* <Text>Don't have an account? Register</Text> */}
+              <View style={{ alignItems: "center" }}>
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("Registration")
+                  }
+                >
+                  <Text>
+                    Don't have an account?
+                    <Text
+                      style={{
+                        color: "blue",
+                      }}
+                    >
+                      {" "}
+                      Register
+                    </Text>
+                  </Text>
+                </TouchableOpacity>
+                {/* <Link
+                  to={{
+                    screen: "Registration",
+                    // params: { id: "jane" },
+                  }}
+                >
+                  <Text>
+                    Don't have an account? Register
+                  </Text>
+                </Link> */}
+                {/* <Text>Don't have an account? Register</Text> */}
+              </View>
             </View>
-          </View>
+          </KeyboardAvoidingView>
         </ImageBackground>
       </View>
     </TouchableWithoutFeedback>

@@ -9,13 +9,22 @@ import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { authSignOutUser } from "../../redux/auth/authOperations";
+import { useDispatch } from "react-redux";
+import { useNavigation } from "@react-navigation/native";
 
 const NestedScreens = createNativeStackNavigator();
 
 export default function PostsScreen({
-  navigation,
   router,
+  // navigation,
 }) {
+  const dispatch = useDispatch();
+
+  const signOut = () => {
+    dispatch(authSignOutUser());
+  };
+
   return (
     <NestedScreens.Navigator>
       <NestedScreens.Screen
@@ -41,7 +50,7 @@ export default function PostsScreen({
                 name="log-out"
                 size={24}
                 color="#BDBDBD"
-                onPress={() => navigation.navigate("Login")}
+                onPress={signOut}
               />
             </TouchableOpacity>
           ),
@@ -54,6 +63,8 @@ export default function PostsScreen({
           headerStyle: { borderBottomWidth: 1 },
           headerTitleAlign: "center",
           headerLeft: () => {
+            const navigation = useNavigation();
+
             return (
               <TouchableOpacity
                 activeOpacity={0.6}
@@ -77,6 +88,8 @@ export default function PostsScreen({
           headerStyle: { borderBottomWidth: 1 },
           headerTitleAlign: "center",
           headerLeft: () => {
+            const navigation = useNavigation();
+
             return (
               <TouchableOpacity
                 activeOpacity={0.6}
