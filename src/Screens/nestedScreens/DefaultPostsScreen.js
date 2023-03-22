@@ -18,7 +18,7 @@ export default function DefaultPostsScreen({
 }) {
   const [posts, setPosts] = useState([]);
 
-  const { email, login } = useSelector(
+  const { email, login, avatar } = useSelector(
     (state) => state.auth
   );
 
@@ -45,7 +45,8 @@ export default function DefaultPostsScreen({
         <View style={styles.containerUserImage}>
           <Image
             style={styles.userPhoto}
-            source={require("../../../assets/images/IMG.jpg")}
+            // source={require("../../../assets/images/IMG.jpg")}
+            source={{ uri: avatar }}
           />
         </View>
         <View>

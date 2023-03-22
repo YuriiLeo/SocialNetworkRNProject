@@ -16,6 +16,7 @@ export default aythSlice = createSlice({
       userId: payload.userId,
       login: payload.login,
       email: payload.email,
+      avatar: payload.avatar,
     }),
     authStateChange: (state, { payload }) => ({
       ...state,

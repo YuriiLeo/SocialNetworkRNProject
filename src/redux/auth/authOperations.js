@@ -12,7 +12,7 @@ import userSlice from "./aytReducer";
 const { updateUserProfiles, authStateChange, authSignOut } =
   userSlice.actions;
 export const authSignUpUser =
-  ({ login, email, password }) =>
+  ({ login, email, password, userAvatar }) =>
   async (dispatch, getState) => {
     try {
       await createUserWithEmailAndPassword(
@@ -21,18 +21,20 @@ export const authSignUpUser =
         password
       );
 
-      const user = await auth.currentUser;
+      const user = auth.currentUser;
       await updateProfile(user, {
         displayName: login,
+        photoURL: userAvatar,
       });
 
-      const { uid, displayName } = await auth.currentUser;
-
+      const { uid, displayName, photoURL } =
+        auth.currentUser;
       dispatch(
         updateUserProfiles({
           userId: uid,
           login: displayName,
           email: email,
+          avatar: photoURL,
         })
       );
     } catch (error) {
