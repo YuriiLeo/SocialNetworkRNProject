@@ -140,6 +140,8 @@ const styles = StyleSheet.create({
     height: 40,
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
+
     borderRadius: 20,
   },
 });

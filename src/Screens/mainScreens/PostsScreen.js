@@ -11,13 +11,13 @@ import { Feather } from "@expo/vector-icons";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 import { useDispatch } from "react-redux";
-import { useNavigation } from "@react-navigation/native";
+// import { useNavigation } from "@react-navigation/native";
 
 const NestedScreens = createNativeStackNavigator();
 
 export default function PostsScreen({
   router,
-  // navigation,
+  navigation,
 }) {
   const dispatch = useDispatch();
 
@@ -63,7 +63,7 @@ export default function PostsScreen({
           headerStyle: { borderBottomWidth: 1 },
           headerTitleAlign: "center",
           headerLeft: () => {
-            const navigation = useNavigation();
+            // const navigation = useNavigation();
 
             return (
               <TouchableOpacity
@@ -88,7 +88,7 @@ export default function PostsScreen({
           headerStyle: { borderBottomWidth: 1 },
           headerTitleAlign: "center",
           headerLeft: () => {
-            const navigation = useNavigation();
+            // const navigation = useNavigation();
 
             return (
               <TouchableOpacity

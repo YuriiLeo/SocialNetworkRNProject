@@ -19,7 +19,7 @@ export default function PostItem({ item, navigation }) {
     location,
     id,
   } = item;
-  console.log("id", id);
+
   return (
     <View style={{ marginBottom: 32 }}>
       <View>

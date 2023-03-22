@@ -13,6 +13,7 @@ import {
   Platform,
   ImageBackground,
 } from "react-native";
+import { Entypo } from "@expo/vector-icons";
 
 import { useDispatch } from "react-redux";
 import { authSignInUser } from "../../redux/auth/authOperations";
@@ -23,13 +24,36 @@ const initialState = {
 };
 
 export default function LoginScreen({ navigation }) {
-  // console.log(Platform.OS);
-  // console.log("navigation", navigation);
   const [isShowKeyBoard, setIsShowKeyBoard] =
     useState(false);
   const [state, setState] = useState(initialState);
+  const [passwordView, setPasswordView] = useState(true);
 
   const dispatch = useDispatch();
+
+  const [isFocusedEmail, setFocusedEmail] = useState(false);
+  const [isFocusedPassword, setFocusedPassword] =
+    useState(false);
+
+  console.log("isFocusedEmail", isFocusedEmail);
+  const handleFocusEmail = () => {
+    setFocusedEmail(true);
+    setIsShowKeyBoard(true);
+  };
+
+  const handleBlurEmail = () => {
+    setFocusedEmail(false);
+    setIsShowKeyBoard(false);
+  };
+  const handleFocusPassword = () => {
+    setFocusedPassword(true);
+    setIsShowKeyBoard(true);
+  };
+
+  const handleBlurPassword = () => {
+    setFocusedPassword(false);
+    setIsShowKeyBoard(false);
+  };
 
   const hendleSubmit = () => {
     keyboardHide();
@@ -43,20 +67,30 @@ export default function LoginScreen({ navigation }) {
     Keyboard.dismiss();
   };
 
+  const switchPasswordView = () => {
+    if (!passwordView) {
+      return setPasswordView(true);
+    }
+    if (state.password.length !== 0) {
+      setPasswordView(false);
+    }
+  };
+  console.log("l", state.password.length);
   return (
-    <TouchableWithoutFeedback onPress={keyboardHide}>
-      <View
-        style={styles.container}
-        // onLayout={onLayoutRootView}
-      >
-        <ImageBackground
-          source={require("../../../assets/images/PhotoBG.jpg")}
-          style={styles.image}
+    <KeyboardAvoidingView
+      behavior={
+        Platform.OS === "ios" ? "padding" : "height"
+      }
+      style={{ flex: 1 }}
+    >
+      <TouchableWithoutFeedback onPress={keyboardHide}>
+        <View
+          style={styles.container}
+          // onLayout={onLayoutRootView}
         >
-          <KeyboardAvoidingView
-            behavior={
-              Platform.OS === "ios" ? "padding" : "height"
-            }
+          <ImageBackground
+            source={require("../../../assets/images/PhotoBG.jpg")}
+            style={styles.image}
           >
             <View
               style={{
@@ -68,9 +102,15 @@ export default function LoginScreen({ navigation }) {
               <Text style={styles.title}>Sign In</Text>
               <View>
                 <TextInput
-                  style={styles.input}
+                  style={{
+                    ...styles.input,
+                    borderColor: isFocusedEmail
+                      ? "#FF6C00"
+                      : "#E8E8E8",
+                  }}
                   placeholder={"Email addres"}
-                  onFocus={() => setIsShowKeyBoard(true)}
+                  onFocus={handleFocusEmail}
+                  onBlur={handleBlurEmail}
                   value={state.email}
                   onChangeText={(value) =>
                     setState((prevState) => ({
@@ -82,10 +122,16 @@ export default function LoginScreen({ navigation }) {
               </View>
               <View>
                 <TextInput
-                  style={styles.input}
-                  secureTextEntry={true}
-                  placeholder={"**********"}
-                  onFocus={() => setIsShowKeyBoard(true)}
+                  style={{
+                    ...styles.input,
+                    borderColor: isFocusedPassword
+                      ? "#FF6C00"
+                      : "#E8E8E8",
+                  }}
+                  secureTextEntry={passwordView}
+                  placeholder={"********"}
+                  onFocus={handleFocusPassword}
+                  onBlur={handleBlurPassword}
                   value={state.password}
                   onChangeText={(value) =>
                     setState((prevState) => ({
@@ -94,6 +140,33 @@ export default function LoginScreen({ navigation }) {
                     }))
                   }
                 />
+                <TouchableOpacity
+                  onPress={switchPasswordView}
+                  style={{
+                    width: 25,
+                    height: 25,
+                    borderRadius: 100,
+                    position: "absolute",
+                    top: 30,
+                    right: 16,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  {passwordView ? (
+                    <Entypo
+                      name="eye"
+                      size={24}
+                      color="black"
+                    />
+                  ) : (
+                    <Entypo
+                      name="eye-with-line"
+                      size={24}
+                      color="black"
+                    />
+                  )}
+                </TouchableOpacity>
               </View>
 
               <TouchableOpacity
@@ -124,7 +197,6 @@ export default function LoginScreen({ navigation }) {
                 {/* <Link
                   to={{
                     screen: "Registration",
-                    // params: { id: "jane" },
                   }}
                 >
                   <Text>
@@ -134,10 +206,10 @@ export default function LoginScreen({ navigation }) {
                 {/* <Text>Don't have an account? Register</Text> */}
               </View>
             </View>
-          </KeyboardAvoidingView>
-        </ImageBackground>
-      </View>
-    </TouchableWithoutFeedback>
+          </ImageBackground>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
