@@ -5,6 +5,7 @@ import {
   Text,
   View,
 } from "react-native";
+import dummyAvatar from "../../assets/hansel.png";
 
 export default function CommentsItem({ item }) {
   // const getData = () => {
@@ -32,13 +33,15 @@ export default function CommentsItem({ item }) {
   ).toLocaleString();
 
   // const formatedDate = getData();
-
+  // console.log("item", item);
   return (
     <View style={styles.itemComments}>
       <View style={styles.imageWrap}>
         <Image
           style={styles.imageAvatar}
-          source={{ uri: item.avatar }}
+          source={
+            item.avatar ? { uri: item.avatar } : dummyAvatar
+          }
         />
       </View>
 

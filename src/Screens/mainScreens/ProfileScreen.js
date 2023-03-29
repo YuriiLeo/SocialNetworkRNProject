@@ -23,6 +23,7 @@ import { db } from "../../firebase/config";
 import { authSignOutUser } from "../../redux/auth/authOperations";
 import { Feather } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import dummyAvatar from "../../../assets/hansel.png";
 
 export default function ProfileScreen({
   route,
@@ -31,7 +32,7 @@ export default function ProfileScreen({
   const [posts, setPosts] = useState([]);
   const [image, setImage] = useState("");
 
-  const { login, userId, avatar } = useSelector(
+  const { login, userId } = useSelector(
     (state) => state.auth
   );
 
@@ -40,7 +41,8 @@ export default function ProfileScreen({
   const signOut = () => {
     dispatch(authSignOutUser());
   };
-  console.log("avatar", avatar);
+  console.log("posts", posts);
+
   const getUserPosts = async () => {
     const q = query(
       collection(db, "posts"),
@@ -92,7 +94,7 @@ export default function ProfileScreen({
           <View>
             <Image
               style={styles.addPhoto}
-              source={{ uri: avatar }}
+              source={!image ? dummyAvatar : { uri: image }}
             />
             <TouchableOpacity
               onPress={handlePickAvatarImage}
@@ -147,6 +149,7 @@ export default function ProfileScreen({
                 <PostItem
                   item={item}
                   navigation={navigation}
+                  route={route}
                 />
               )}
               keyExtractor={(item) => item.id}
