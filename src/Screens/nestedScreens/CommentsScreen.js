@@ -16,12 +16,15 @@ import {
   Dimensions,
   FlatList,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import { useSelector } from "react-redux";
 import { db } from "../../firebase/config";
 import { AntDesign } from "@expo/vector-icons";
 import CommentsItem from "../../components/CommentsItem";
+// import dummyAvatar from "../../../assets/hansel.png";
 
 export default function CommentsScreen({
   route,
@@ -33,11 +36,12 @@ export default function CommentsScreen({
     useState(false);
 
   const { photo, postId } = route.params;
-  const { login, avatar } = useSelector(
+  const { login, avatar = "" } = useSelector(
     (state) => state.auth
   );
 
-  const createPost = async () => {
+  const createPostComment = async () => {
+    // console.log("comment", comment);
     try {
       const postRef = collection(db, "posts");
       await addDoc(
@@ -56,6 +60,7 @@ export default function CommentsScreen({
 
   const getAllPostDB = async () => {
     const postRef = collection(db, "posts");
+
     onSnapshot(
       collection(postRef, postId, "comments"),
       (data) => {
@@ -69,13 +74,22 @@ export default function CommentsScreen({
     );
   };
 
+  // console.log("allComments", allComments);
+
   useEffect(() => {
+    // console.log("useEf");
     getAllPostDB();
   }, []);
 
   const SubmitComment = () => {
-    createPost();
+    createPostComment();
     setComment("");
+    keyboardHide();
+  };
+
+  const keyboardHide = () => {
+    setIsShowKeyBoard(false);
+    Keyboard.dismiss();
   };
 
   return (
@@ -85,13 +99,22 @@ export default function CommentsScreen({
       }
       style={{ flex: 1, backgroundColor: "#FFFFFF" }}
     >
-      <View style={styles.container}>
+      <TouchableWithoutFeedback onPress={keyboardHide}>
         <View
           style={{
-            backgroundColo: "#FFF",
-            justifyContent: "flex-end",
+            ...styles.container,
+            justifyContent: isShowKeyBoard
+              ? "center"
+              : "space-between",
+            marginBottom: isShowKeyBoard ? 40 : 0,
           }}
         >
+          {/* <View
+            style={{
+              backgroundColo: "#FFF",
+              justifyContent: "flex-end",
+            }}
+          > */}
           <View style={styles.takePhotoContainer}>
             <Image
               source={{ uri: photo }}
@@ -107,8 +130,14 @@ export default function CommentsScreen({
           {allComments.length !== 0 ? (
             <View
               style={{
-                height: isShowKeyBoard ? 100 : 270,
-                marginBottom: 20,
+                height: isShowKeyBoard ? 270 : 270,
+                // backgroundColor: "tomato",
+
+                // height: "auto",
+                // height: isShowKeyBoard
+                //   ? Dimensions.get("window").height - 780
+                //   : Dimensions.get("window").height - 580,
+                // marginBottom: 20,
               }}
             >
               <FlatList
@@ -153,7 +182,8 @@ export default function CommentsScreen({
             </TouchableOpacity>
           </View>
         </View>
-      </View>
+        {/* </View> */}
+      </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );
 }
@@ -163,12 +193,14 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: 16,
     backgroundColor: "#ffffff",
+    justifyContent: "space-between",
   },
   takePhotoContainer: {
     marginTop: 32,
     marginBottom: 32,
   },
   commentPublishContainer: {
+    marginBottom: 16,
     position: "relative",
     justifyContent: "center",
   },
