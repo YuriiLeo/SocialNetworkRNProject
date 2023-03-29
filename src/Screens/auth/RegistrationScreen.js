@@ -11,6 +11,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   ImageBackground,
+  // Alert,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
@@ -111,11 +112,13 @@ export default function RegistrationScreen() {
   };
 
   const uploadAvatarImageToServer = async () => {
+    if (!image) return;
     try {
       const response = await fetch(image);
       const file = await response.blob();
 
       const avatarImageId = uuid.v4();
+
       const storageRef = ref(
         storage,
         `avatarImage/${avatarImageId}`
@@ -131,7 +134,15 @@ export default function RegistrationScreen() {
     }
   };
 
+  const registrationIsReady = () => {
+    if (!login || !email || !password) return false;
+    return true;
+  };
+
   const handleSubmit = async () => {
+    if (!registrationIsReady()) {
+      return Alert.alert("Fill in all fields");
+    }
     try {
       keyboardHide();
       const userAvatar = await uploadAvatarImageToServer();
@@ -148,7 +159,7 @@ export default function RegistrationScreen() {
       setLogin("");
       setPassword("");
     } catch (error) {
-      console.log(error);
+      console.log("error", error.message);
     }
   };
 
@@ -244,6 +255,7 @@ export default function RegistrationScreen() {
                       : "#E8E8E8",
                   }}
                   placeholder={"Email addres"}
+                  keyboardType="email-address"
                   onFocus={handleFocusEmail}
                   onBlur={handleBlurEmail}
                   value={email}
