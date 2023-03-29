@@ -1,6 +1,7 @@
 import { Camera, CameraType } from "expo-camera";
 import { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   Alert,
   Button,
   Dimensions,
@@ -27,7 +28,11 @@ import {
   ref,
   uploadBytes,
 } from "firebase/storage";
-import { addDoc, collection } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  serverTimestamp,
+} from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
 
@@ -41,6 +46,7 @@ export default function CreateScreen({ navigation }) {
   const [locality, setLocality] = useState("");
   const [isShowKeyBoard, setIsShowKeyBoard] =
     useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { userId, login } = useSelector(
     (state) => state.auth
@@ -60,7 +66,7 @@ export default function CreateScreen({ navigation }) {
       setPhoto("");
       setLocality("");
       setTitle("");
-      // setIsLoading(false);
+      setIsLoading(false);
     }
   }, [isFocused]);
 
@@ -75,11 +81,13 @@ export default function CreateScreen({ navigation }) {
   const takePhoto = async () => {
     try {
       if (!photo) {
+        // setIsLoading(true);
         const { uri } = await snap.takePictureAsync();
         setPhoto(uri);
         let currentLocation =
           await Location.getCurrentPositionAsync({});
         setLocation(currentLocation);
+        // setIsLoading(false);
       }
       if (photo) {
         setPhoto("");
@@ -92,6 +100,12 @@ export default function CreateScreen({ navigation }) {
   const deletePhoto = () => {
     setPhoto("");
   };
+
+  const keyboardHide = () => {
+    setIsShowKeyBoard(false);
+    Keyboard.dismiss();
+  };
+
   const postIsReady = () => {
     if (!photo || !title || !locality || !location)
       return false;
@@ -101,9 +115,11 @@ export default function CreateScreen({ navigation }) {
   const sendPhoto = async () => {
     if (!postIsReady())
       return Alert.alert("Fill in all fields");
-
+    setIsLoading(true);
     uploadPostToServer();
+    setIsLoading(false);
     navigation.navigate("DefaultPosts");
+    keyboardHide();
     setPhoto("");
     setLocation("");
     setTitle("");
@@ -111,7 +127,7 @@ export default function CreateScreen({ navigation }) {
   };
 
   const uploadPhotoToServer = async () => {
-    console.log("photoIn", photo);
+    // console.log("photoIn", photo);
     try {
       const response = await fetch(photo);
       const file = await response.blob();
@@ -127,6 +143,7 @@ export default function CreateScreen({ navigation }) {
       );
 
       // console.log("processedPhoto", processedPhoto);
+
       return processedPhoto;
     } catch (error) {
       console.log(error);
@@ -143,6 +160,7 @@ export default function CreateScreen({ navigation }) {
         locality,
         userId,
         login,
+        createdAt: serverTimestamp(),
       });
     } catch (error) {
       console.log(error);
@@ -156,133 +174,151 @@ export default function CreateScreen({ navigation }) {
       }
       style={{ flex: 1, backgroundColor: "#FFFFFF" }}
     >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-          {isFocused ? (
-            <Camera
-              style={{
-                ...styles.camera,
-                height: isShowKeyBoard ? 0 : 240,
-              }}
-              type={type}
-              ref={setSnap}
-            >
-              {photo && (
-                <View style={styles.takePhotoContainer}>
-                  <Image
-                    source={{ uri: photo }}
-                    style={{
-                      // width: 100,
-                      width:
-                        Dimensions.get("window").width - 32,
-                      height: isShowKeyBoard ? 0 : 240,
-                      borderRadius: 8,
-                    }}
-                  />
-                </View>
-              )}
-              <View style={styles.buttonContainer}>
-                <TouchableOpacity
-                  style={styles.button}
-                  onPress={toggleCameraType}
-                  // onBlur={console.log("blur")}
-                >
-                  <Ionicons
-                    name="camera-reverse-outline"
-                    size={24}
-                    color="#BDBDBD"
-                  />
-                </TouchableOpacity>
-              </View>
-              {!photo ? (
-                <View style={styles.snapWrapper}>
+      <TouchableWithoutFeedback onPress={keyboardHide}>
+        {!isLoading ? (
+          <View style={styles.container}>
+            {isFocused ? (
+              <Camera
+                style={{
+                  ...styles.camera,
+                  height: isShowKeyBoard ? 0 : 240,
+                }}
+                type={type}
+                ref={setSnap}
+              >
+                {photo && (
+                  <View style={styles.takePhotoContainer}>
+                    <Image
+                      source={{ uri: photo }}
+                      style={{
+                        // width: 100,
+                        width:
+                          Dimensions.get("window").width -
+                          32,
+                        height: isShowKeyBoard ? 0 : 240,
+                        borderRadius: 8,
+                      }}
+                    />
+                  </View>
+                )}
+                <View style={styles.buttonContainer}>
                   <TouchableOpacity
-                    onPress={takePhoto}
-                    style={styles.snapContainer}
-                    // onBlur={console.log("blur2")}
+                    style={styles.button}
+                    onPress={toggleCameraType}
+                    // onBlur={console.log("blur")}
                   >
-                    <MaterialIcons
-                      name="photo-camera"
+                    <Ionicons
+                      name="camera-reverse-outline"
                       size={24}
                       color="#BDBDBD"
                     />
                   </TouchableOpacity>
                 </View>
+                {!photo ? (
+                  <View style={styles.snapWrapper}>
+                    <TouchableOpacity
+                      onPress={takePhoto}
+                      style={styles.snapContainer}
+                      // onBlur={console.log("blur2")}
+                    >
+                      <MaterialIcons
+                        name="photo-camera"
+                        size={24}
+                        color="#BDBDBD"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={styles.deleteSnapWrapper}>
+                    <TouchableOpacity
+                      onPress={deletePhoto}
+                      // onBlur={console.log("blur3")}
+                      style={{
+                        ...styles.snapContainer,
+                        width: 30,
+                        height: 30,
+                      }}
+                    >
+                      <FontAwesome
+                        name="trash-o"
+                        size={24}
+                        color="black"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </Camera>
+            ) : null}
+            <View style={styles.inputContainer}>
+              {!photo ? (
+                <Text style={styles.textOptionsFoto}>
+                  Upload a photo
+                </Text>
               ) : (
-                <View style={styles.deleteSnapWrapper}>
-                  <TouchableOpacity
-                    onPress={deletePhoto}
-                    // onBlur={console.log("blur3")}
-                    style={{
-                      ...styles.snapContainer,
-                      width: 30,
-                      height: 30,
-                    }}
-                  >
-                    <FontAwesome
-                      name="trash-o"
-                      size={24}
-                      color="black"
-                    />
-                  </TouchableOpacity>
-                </View>
+                <Text style={styles.textOptionsFoto}>
+                  Edit photo
+                </Text>
               )}
-            </Camera>
-          ) : null}
-          <View style={styles.inputContainer}>
-            {!photo ? (
-              <Text style={styles.textOptionsFoto}>
-                Upload a photo
-              </Text>
-            ) : (
-              <Text style={styles.textOptionsFoto}>
-                Edit photo
-              </Text>
-            )}
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder={"Title..."}
-                onFocus={() => setIsShowKeyBoard(true)}
-                onBlur={() => setIsShowKeyBoard(false)}
-                value={title}
-                onChangeText={(value) => setTitle(value)}
-              />
+              <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder={"Title..."}
+                  onFocus={() => setIsShowKeyBoard(true)}
+                  onBlur={() => setIsShowKeyBoard(false)}
+                  value={title}
+                  onChangeText={(value) => setTitle(value)}
+                />
+              </View>
+              <View>
+                <TextInput
+                  style={styles.input}
+                  placeholder={"Locality..."}
+                  onFocus={() => setIsShowKeyBoard(true)}
+                  onBlur={() => setIsShowKeyBoard(false)}
+                  value={locality}
+                  onChangeText={(value) =>
+                    setLocality(value)
+                  }
+                />
+              </View>
             </View>
-            <View>
-              <TextInput
-                style={styles.input}
-                placeholder={"Locality..."}
-                onFocus={() => setIsShowKeyBoard(true)}
-                onBlur={() => setIsShowKeyBoard(false)}
-                value={locality}
-                onChangeText={(value) => setLocality(value)}
-              />
-            </View>
-          </View>
-          <TouchableOpacity
-            onPress={sendPhoto}
-            style={{
-              ...styles.publishBtn,
-              backgroundColor: !postIsReady()
-                ? "#F6F6F6"
-                : "#FF6C00",
-            }}
-          >
-            <Text
+            <TouchableOpacity
+              onPress={sendPhoto}
               style={{
-                fontFamily: "SS_Regular",
-                fontSize: 16,
-                color: postIsReady()
-                  ? "#ffffff"
-                  : "#BDBDBD",
+                ...styles.publishBtn,
+                backgroundColor: !postIsReady()
+                  ? "#F6F6F6"
+                  : "#FF6C00",
               }}
             >
-              {photo && !location && <Text>Wait</Text>}{" "}
-              Publish
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Text
+                style={{
+                  fontFamily: "SS_Regular",
+                  fontSize: 16,
+                  color: postIsReady()
+                    ? "#ffffff"
+                    : "#BDBDBD",
+                }}
+              >
+                {photo && !location && <Text>Wait</Text>}{" "}
+                Publish
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View
+            style={{
+              ...styles.container,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <ActivityIndicator
+              size="large"
+              color="#FF6C00"
+            />
+          </View>
+        )}
       </TouchableWithoutFeedback>
     </KeyboardAvoidingView>
   );

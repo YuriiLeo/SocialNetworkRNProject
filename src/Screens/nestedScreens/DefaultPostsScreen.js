@@ -1,6 +1,12 @@
-import { collection, onSnapshot } from "firebase/firestore";
+import {
+  collection,
+  onSnapshot,
+  orderBy,
+  query,
+} from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   FlatList,
   Image,
   StyleSheet,
@@ -17,15 +23,38 @@ export default function DefaultPostsScreen({
   navigation,
 }) {
   const [posts, setPosts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const { email, login, avatar } = useSelector(
     (state) => state.auth
   );
 
-  const getAllPost = async () => {
-    const postRef = collection(db, "posts");
+  // const getAllPost = async () => {
+  //   const postRef = collection(db, "posts");
 
-    onSnapshot(postRef, (data) => {
+  //   onSnapshot(postRef, (data) => {
+  //     console.log("data", data);
+  //     console.log("data", data.docs);
+  //     // console.log("route", route);
+
+  //     setPosts(
+  //       data.docs.map((doc) => ({
+  //         ...doc.data(),
+  //         id: doc.id,
+  //       }))
+  //     );
+  //   });
+  // };
+
+  const getAllPost = async () => {
+    // console.log("all");
+    setIsLoading(true);
+    // console.log("all2");
+    const q = query(
+      collection(db, "posts"),
+      orderBy("createdAt", "desc")
+    );
+    onSnapshot(q, (data) => {
       setPosts(
         data.docs.map((doc) => ({
           ...doc.data(),
@@ -33,9 +62,13 @@ export default function DefaultPostsScreen({
         }))
       );
     });
+    setIsLoading(false);
   };
+  // console.log("posts", posts);
 
   useEffect(() => {
+    // console.log("all3");
+
     getAllPost();
   }, []);
 
@@ -54,27 +87,47 @@ export default function DefaultPostsScreen({
           <Text style={styles.userEmail}>{email}</Text>
         </View>
       </View>
-      {posts.length !== 0 ? (
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => (
-            <PostItem item={item} navigation={navigation} />
+      {!isLoading ? (
+        <View>
+          {posts.length !== 0 ? (
+            <FlatList
+              data={posts}
+              renderItem={({ item }) => (
+                <PostItem
+                  item={item}
+                  navigation={navigation}
+                  route={route}
+                />
+              )}
+              // keyExtractor={(item) => item.id}
+              keyExtractor={(item, index) =>
+                index.toString()
+              }
+            />
+          ) : (
+            <Text
+              style={{
+                fontSize: 16,
+                marginTop: 50,
+                textAlign: "center",
+                fontWeight: "700",
+                fontFamily: "SS_Bold",
+              }}
+            >
+              Make your first post faster
+            </Text>
           )}
-          // keyExtractor={(item) => item.id}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        </View>
       ) : (
-        <Text
+        <View
           style={{
-            fontSize: 16,
-            marginTop: 50,
-            textAlign: "center",
-            fontWeight: "700",
-            fontFamily: "SS_Bold",
+            ...styles.container,
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          Make your first post faster
-        </Text>
+          <ActivityIndicator size="large" color="#FF6C00" />
+        </View>
       )}
     </View>
   );
