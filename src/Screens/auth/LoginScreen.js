@@ -1,4 +1,3 @@
-// import { Link } from "@react-navigation/native";
 import React, { useState } from "react";
 
 import {
@@ -35,7 +34,6 @@ export default function LoginScreen({ navigation }) {
   const [isFocusedPassword, setFocusedPassword] =
     useState(false);
 
-  console.log("isFocusedEmail", isFocusedEmail);
   const handleFocusEmail = () => {
     setFocusedEmail(true);
     setIsShowKeyBoard(true);
@@ -57,7 +55,6 @@ export default function LoginScreen({ navigation }) {
 
   const hendleSubmit = () => {
     keyboardHide();
-    console.log(state);
     setState(initialState);
     dispatch(authSignInUser(state));
   };
@@ -75,7 +72,7 @@ export default function LoginScreen({ navigation }) {
       setPasswordView(false);
     }
   };
-  console.log("l", state.password.length);
+
   return (
     <KeyboardAvoidingView
       behavior={
@@ -84,10 +81,7 @@ export default function LoginScreen({ navigation }) {
       style={{ flex: 1 }}
     >
       <TouchableWithoutFeedback onPress={keyboardHide}>
-        <View
-          style={styles.container}
-          // onLayout={onLayoutRootView}
-        >
+        <View style={styles.container}>
           <ImageBackground
             source={require("../../../assets/images/PhotoBG.jpg")}
             style={styles.image}
@@ -109,6 +103,7 @@ export default function LoginScreen({ navigation }) {
                       : "#E8E8E8",
                   }}
                   placeholder={"Email addres"}
+                  keyboardType="email-address"
                   onFocus={handleFocusEmail}
                   onBlur={handleBlurEmail}
                   value={state.email}
@@ -194,16 +189,6 @@ export default function LoginScreen({ navigation }) {
                     </Text>
                   </Text>
                 </TouchableOpacity>
-                {/* <Link
-                  to={{
-                    screen: "Registration",
-                  }}
-                >
-                  <Text>
-                    Don't have an account? Register
-                  </Text>
-                </Link> */}
-                {/* <Text>Don't have an account? Register</Text> */}
               </View>
             </View>
           </ImageBackground>
@@ -216,7 +201,6 @@ export default function LoginScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 2,
-    // fontFamily: "Inter",
     justifyContent: "flex-start",
   },
   image: {
@@ -226,14 +210,12 @@ const styles = StyleSheet.create({
   },
   form: {
     paddingBottom: 111,
-    // position: "relative",
     paddingHorizontal: 16,
     backgroundColor: "#FFFFFF",
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
   },
   title: {
-    // fontFamily: "Inter",
     marginBottom: 16,
     marginTop: 32,
     fontSize: 30,
