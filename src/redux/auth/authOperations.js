@@ -5,6 +5,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+import { Alert } from "react-native";
 
 import { auth } from "../../../src/firebase/config";
 import userSlice from "./aytReducer";
@@ -42,6 +43,14 @@ export const authSignUpUser =
       const errorMessage = error.message;
       console.log("errorCode", errorCode);
       console.log("errorMessage", errorMessage);
+      if (errorCode === "auth/invalid-email") {
+        return Alert.alert("Сheck for correctness email");
+      }
+      if (errorCode === "auth/weak-password") {
+        return Alert.alert(
+          "Password should be at least 6 characters"
+        );
+      }
     }
   };
 
@@ -61,6 +70,19 @@ export const authSignInUser =
       const errorMessage = error.message;
       console.log("errorCode", errorCode);
       console.log("errorMessage", errorMessage);
+      if (
+        errorCode === "auth/user-not-found" ||
+        "auth/wrong-password"
+      ) {
+        return Alert.alert(
+          "Сheck for correctness email/password"
+        );
+      }
+      // if (errorCode === "auth/wrong-password") {
+      //   return Alert.alert(
+      //     "Password should be at least 6 characters"
+      //   );
+      // }
     }
   };
 
