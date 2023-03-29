@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
   StyleSheet,
@@ -9,8 +9,19 @@ import {
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import {
+  collection,
+  getCountFromServer,
+} from "firebase/firestore";
+import { db } from "../firebase/config";
 
-export default function PostItem({ item, navigation }) {
+export default function PostItem({
+  item,
+  navigation,
+  route,
+}) {
+  const [count, setCount] = useState(0);
+
   const {
     photo,
     title,
@@ -19,6 +30,24 @@ export default function PostItem({ item, navigation }) {
     location,
     id,
   } = item;
+
+  // console.log("route", route.name);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const collect = collection(
+          db,
+          `posts/${item.id}/comments`
+        );
+        const snapshot = await getCountFromServer(collect);
+        setCount(snapshot.data().count);
+      } catch (error) {}
+    })();
+  }, []);
+  // console.log("count", count);
+
+  // console.log("navigation", navigation);
 
   return (
     <View style={{ marginBottom: 32 }}>
@@ -52,7 +81,7 @@ export default function PostItem({ item, navigation }) {
               color="#BDBDBD"
             />
           </TouchableOpacity>
-          <Text style={styles.coments}>{coments}</Text>
+          <Text style={styles.coments}>{count}</Text>
         </View>
         <View
           style={{
