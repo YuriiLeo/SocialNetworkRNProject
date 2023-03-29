@@ -5,6 +5,7 @@ const state = {
   login: null,
   stateChange: false,
   email: null,
+  avatar: null,
 };
 
 export default aythSlice = createSlice({

@@ -32,7 +32,7 @@ export default function ProfileScreen({
   const [posts, setPosts] = useState([]);
   const [image, setImage] = useState("");
 
-  const { login, userId } = useSelector(
+  const { login, userId, avatar } = useSelector(
     (state) => state.auth
   );
 
@@ -41,7 +41,6 @@ export default function ProfileScreen({
   const signOut = () => {
     dispatch(authSignOutUser());
   };
-  console.log("posts", posts);
 
   const getUserPosts = async () => {
     const q = query(
@@ -94,7 +93,9 @@ export default function ProfileScreen({
           <View>
             <Image
               style={styles.addPhoto}
-              source={!image ? dummyAvatar : { uri: image }}
+              source={
+                !avatar ? dummyAvatar : { uri: avatar }
+              }
             />
             <TouchableOpacity
               onPress={handlePickAvatarImage}

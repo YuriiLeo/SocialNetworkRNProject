@@ -78,11 +78,6 @@ export const authSignInUser =
           "Сheck for correctness email/password"
         );
       }
-      // if (errorCode === "auth/wrong-password") {
-      //   return Alert.alert(
-      //     "Password should be at least 6 characters"
-      //   );
-      // }
     }
   };
 
@@ -96,11 +91,13 @@ export const authStateChangeUser =
   () => async (dispatch, getState) => {
     try {
       onAuthStateChanged(auth, (user) => {
+        console.log("userInOper", user);
         if (user) {
           const updateProfilesUser = {
             userId: user.uid,
             login: user.displayName,
             email: user.email,
+            avatar: user.photoURL,
           };
 
           dispatch(
