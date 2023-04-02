@@ -110,13 +110,15 @@ export default function ProfileScreen({
                 justifyContent: "center",
                 alignItems: "center",
                 borderWidth: 1,
-                borderColor: !image ? "#FF6C00" : "#BDBDBD",
-                // transform: image
+                borderColor: !avatar
+                  ? "#FF6C00"
+                  : "#BDBDBD",
+                // transform: avatar
                 //   ? [{ rotate: "45deg" }]
                 //   : [{ rotate: "0deg" }],
               }}
             >
-              {!image ? (
+              {!avatar ? (
                 <AntDesign
                   name="plus"
                   size={15}
