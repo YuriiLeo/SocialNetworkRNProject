@@ -51,6 +51,9 @@ export const authSignUpUser =
           "Password should be at least 6 characters"
         );
       }
+      if (errorCode === "auth/email-already-in-use") {
+        return Alert.alert("This email is already in use");
+      }
     }
   };
 
