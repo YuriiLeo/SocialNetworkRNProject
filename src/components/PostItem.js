@@ -9,10 +9,7 @@ import {
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import {
-  collection,
-  getCountFromServer,
-} from "firebase/firestore";
+import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 export default function PostItem({
@@ -22,32 +19,16 @@ export default function PostItem({
 }) {
   const [count, setCount] = useState(0);
 
-  const {
-    photo,
-    title,
-    coments = 0,
-    locality,
-    location,
-    id,
-  } = item;
-
-  // console.log("route", route.name);
+  const { photo, title, locality, location, id } = item;
 
   useEffect(() => {
-    (async () => {
-      try {
-        const collect = collection(
-          db,
-          `posts/${item.id}/comments`
-        );
-        const snapshot = await getCountFromServer(collect);
-        setCount(snapshot.data().count);
-      } catch (error) {}
-    })();
-  }, []);
-  // console.log("count", count);
+    const collect = collection(db, `posts/${id}/comments`);
+    const unsubscribe = onSnapshot(collect, (data) => {
+      setCount(data.size);
+    });
 
-  // console.log("navigation", navigation);
+    return () => unsubscribe();
+  }, []);
 
   return (
     <View style={{ marginBottom: 32 }}>
@@ -138,3 +119,18 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
 });
+
+// useEffect(() => {
+//   (async () => {
+//     try {
+//       const collect = collection(
+//         db,
+//         `posts/${id}/comments`
+//       );
+//       const snapshot = await getCountFromServer(collect);
+//       setCount(snapshot.data().count);
+//     } catch (error) {
+//       console.log("error", error);
+//     }
+//   })();
+// }, [item]);
