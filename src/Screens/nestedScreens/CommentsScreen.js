@@ -104,8 +104,9 @@ export default function CommentsScreen({
           style={{
             ...styles.container,
             justifyContent: isShowKeyBoard
-              ? "center"
+              ? "flex-start"
               : "space-between",
+            // justifyContent: "space-between",
             marginBottom: isShowKeyBoard ? 40 : 0,
           }}
         >
@@ -130,7 +131,7 @@ export default function CommentsScreen({
           {allComments.length !== 0 ? (
             <View
               style={{
-                height: isShowKeyBoard ? 270 : 270,
+                height: isShowKeyBoard ? 230 : 270,
                 // backgroundColor: "tomato",
 
                 // height: "auto",

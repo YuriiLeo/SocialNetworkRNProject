@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import {
   ActivityIndicator,
   Alert,
-  Button,
   Dimensions,
   Image,
   Keyboard,
@@ -83,6 +82,7 @@ export default function CreateScreen({ navigation }) {
       if (!photo) {
         // setIsLoading(true);
         const { uri } = await snap.takePictureAsync();
+
         setPhoto(uri);
         let currentLocation =
           await Location.getCurrentPositionAsync({});
@@ -127,7 +127,6 @@ export default function CreateScreen({ navigation }) {
   };
 
   const uploadPhotoToServer = async () => {
-    // console.log("photoIn", photo);
     try {
       const response = await fetch(photo);
       const file = await response.blob();
@@ -141,8 +140,6 @@ export default function CreateScreen({ navigation }) {
       const processedPhoto = await getDownloadURL(
         ref(storage, `postImage/${photoId}`)
       );
-
-      // console.log("processedPhoto", processedPhoto);
 
       return processedPhoto;
     } catch (error) {
@@ -205,7 +202,6 @@ export default function CreateScreen({ navigation }) {
                   <TouchableOpacity
                     style={styles.button}
                     onPress={toggleCameraType}
-                    // onBlur={console.log("blur")}
                   >
                     <Ionicons
                       name="camera-reverse-outline"
@@ -219,7 +215,6 @@ export default function CreateScreen({ navigation }) {
                     <TouchableOpacity
                       onPress={takePhoto}
                       style={styles.snapContainer}
-                      // onBlur={console.log("blur2")}
                     >
                       <MaterialIcons
                         name="photo-camera"
@@ -232,7 +227,6 @@ export default function CreateScreen({ navigation }) {
                   <View style={styles.deleteSnapWrapper}>
                     <TouchableOpacity
                       onPress={deletePhoto}
-                      // onBlur={console.log("blur3")}
                       style={{
                         ...styles.snapContainer,
                         width: 30,
@@ -355,10 +349,6 @@ const styles = StyleSheet.create({
     left: "50%",
     marginRight: "-50%",
     marginBottom: "-50%",
-    // flex: 1,
-    // justifyContent: "flex-start",
-
-    // alignItems: "center",
   },
   deleteSnapWrapper: {
     position: "absolute",
@@ -379,8 +369,6 @@ const styles = StyleSheet.create({
   },
   snap: { color: "#FFF" },
   buttonContainer: {
-    // flex: 1,
-    // flexDirection: "row",
     backgroundColor: "transparent",
     margin: 24,
   },
