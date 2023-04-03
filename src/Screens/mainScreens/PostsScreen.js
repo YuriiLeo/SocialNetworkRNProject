@@ -79,6 +79,9 @@ export default function PostsScreen({
               </TouchableOpacity>
             );
           },
+          tabBarStyle: {
+            display: "none",
+          },
         }}
         name="Comments"
         component={CommentsScreen}

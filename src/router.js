@@ -73,6 +73,9 @@ export default function useRoute(isAuth) {
       />
       <MainTab.Screen
         options={{
+          tabBarStyle: {
+            display: "none",
+          },
           headerTitle: "Create a publication",
           headerLeft: () => {
             const navigation = useNavigation();
