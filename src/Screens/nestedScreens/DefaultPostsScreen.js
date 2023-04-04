@@ -88,7 +88,7 @@ export default function DefaultPostsScreen({
         </View>
       </View>
       {!isLoading ? (
-        <View>
+        <View style={{ marginBottom: 80 }}>
           {posts.length !== 0 ? (
             <FlatList
               data={posts}
