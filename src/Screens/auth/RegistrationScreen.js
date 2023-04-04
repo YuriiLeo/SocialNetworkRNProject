@@ -15,6 +15,8 @@ import {
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 
+import * as ImageManipulator from "expo-image-manipulator";
+
 import { useDispatch } from "react-redux";
 
 import { authSignUpUser } from "../../redux/auth/authOperations";
@@ -106,8 +108,19 @@ export default function RegistrationScreen() {
       aspect: [4, 3],
       quality: 1,
     });
+
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      const uri = result.assets[0].uri;
+      let resizedUri =
+        await ImageManipulator.manipulateAsync(
+          uri,
+          [{ resize: { width: 320 } }],
+          {
+            format: ImageManipulator.SaveFormat.JPEG,
+          }
+        );
+
+      setImage(resizedUri.uri);
     }
   };
 
