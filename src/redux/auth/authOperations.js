@@ -94,7 +94,6 @@ export const authStateChangeUser =
   () => async (dispatch, getState) => {
     try {
       onAuthStateChanged(auth, (user) => {
-        console.log("userInOper", user);
         if (user) {
           const updateProfilesUser = {
             userId: user.uid,
