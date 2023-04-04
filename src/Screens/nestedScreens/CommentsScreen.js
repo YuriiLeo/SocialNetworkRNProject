@@ -120,8 +120,8 @@ export default function CommentsScreen({
             <Image
               source={{ uri: photo }}
               style={{
-                width: 380,
-                // Dimensions.get("window").width - 32,
+                // width: 380,
+                width: Dimensions.get("window").width - 32,
                 height: isShowKeyBoard ? 0 : 240,
                 borderRadius: 8,
               }}
