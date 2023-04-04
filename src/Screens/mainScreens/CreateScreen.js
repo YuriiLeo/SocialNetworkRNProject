@@ -34,6 +34,7 @@ import {
 } from "firebase/firestore";
 import { useSelector } from "react-redux";
 import { useIsFocused } from "@react-navigation/native";
+import { launchCameraAsync } from "expo-image-picker";
 
 export default function CreateScreen({ navigation }) {
   const [type, setType] = useState(CameraType.back);
@@ -81,7 +82,11 @@ export default function CreateScreen({ navigation }) {
     try {
       if (!photo) {
         // setIsLoading(true);
-        const { uri } = await snap.takePictureAsync();
+        const { uri } = await snap.takePictureAsync({
+          allowsEditing: true,
+          quality: 0.2,
+          exif: true,
+        });
 
         setPhoto(uri);
         let currentLocation =
@@ -96,6 +101,35 @@ export default function CreateScreen({ navigation }) {
       console.log(error);
     }
   };
+
+  // const takePhoto = async () => {
+  //   try {
+  //     if (!photo) {
+
+  //       // setIsLoading(true);
+
+  //       const result = await launchCameraAsync({
+  //         allowsEditing: true,
+  //         quality: 0.2,
+  //         aspect: [4, 3],
+  //         exif: true,
+  //       });
+  //       const uri = result.assets[0].uri;
+
+  //       setPhoto(uri);
+  //       let currentLocation =
+  //         await Location.getCurrentPositionAsync({});
+  //       setLocation(currentLocation);
+  //       // setIsLoading(false);
+  //     }
+  //     if (photo) {
+
+  //       setPhoto("");
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const deletePhoto = () => {
     setPhoto("");
